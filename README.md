@@ -1,2 +1,0 @@
-# sdc
-Sheyla do Contabil
