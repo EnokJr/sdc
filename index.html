@@ -1062,7 +1062,132 @@ const ListLimit = ({
     }
   }, "Recolher"))));
 };
-function CaixinhasBlock({ caixinhas, setCaixinhas, saldoLivre, fmt, s }) {
+function CaixinhasTab({ caixinhas, setCaixinhas, cxMovimentos, cxOperar, saldoLivre, totalCaixinhas, fmt, s }) {
+  const [cxSel, setCxSel] = React.useState("todas");
+  const [cxModal, setCxModal] = React.useState(null);
+  const [cxValor, setCxValor] = React.useState("");
+  const [novaNome, setNovaNome] = React.useState("");
+  const CX_CORES = ["#6ea8fe","#1D9E75","#EF9F27","#E24B4A","#c084fc","#f97316","#38bdf8","#a3e635"];
+  const addCaixinha = () => {
+    const nome = novaNome.trim();
+    if (!nome) return;
+    const cor = CX_CORES[caixinhas.length % CX_CORES.length];
+    setCaixinhas(prev => [...prev, { id: Date.now(), nome, saldo: 0, cor }]);
+    setNovaNome("");
+  };
+  const delCaixinha = (id) => {
+    const cx = caixinhas.find(c => c.id === id);
+    if (cx && cx.saldo > 0 && !confirm(`Tem ${fmt(cx.saldo)} nessa caixinha. O valor volta pro caixa livre. Confirmar exclusão?`)) return;
+    setCaixinhas(prev => prev.filter(c => c.id !== id));
+  };
+  const handleCxOp = () => {
+    if (!cxModal) return;
+    const v = parseFloat(cxValor.replace(",","."));
+    if (!v || v <= 0) return;
+    const op = cxModal.op;
+    if (op === "deposito" && v > saldoLivre) { alert("Valor maior que o caixa livre disponível!"); return; }
+    if (op === "retirada" && v > cxModal.cx.saldo) { alert("Valor maior que o saldo da caixinha!"); return; }
+    cxOperar(cxModal.cx.id, op, v, cxModal.cx.nome);
+    setCxModal(null); setCxValor("");
+  };
+  const movFiltrado = cxSel === "todas" ? cxMovimentos : cxMovimentos.filter(m => m.caixinhaId === Number(cxSel));
+  const fmtData = d => { if (!d) return ""; const [a,me,di] = d.split("-"); return `${di}/${me}/${a}`; };
+  return React.createElement("div", null,
+    // Header
+    React.createElement("div", { style:{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 } },
+      React.createElement("div", null,
+        React.createElement("div", { style:{ fontSize:22, fontWeight:500 } }, "Caixinhas"),
+        React.createElement("div", { style:{ fontSize:13, color:"var(--txt2)" } }, "Seus envelopes de investimento")
+      )
+    ),
+    // Resumo total
+    React.createElement("div", { style:{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:16 } },
+      React.createElement("div", { style:{ ...s.card, borderLeft:"3px solid #c084fc" } },
+        React.createElement("div", { style:{ fontSize:11, color:"var(--txt2)", marginBottom:4 } }, "Total nas caixinhas"),
+        React.createElement("div", { style:{ fontSize:20, fontWeight:700, color:"#c084fc" } }, fmt(totalCaixinhas))
+      ),
+      React.createElement("div", { style:{ ...s.card, borderLeft:"3px solid #6ea8fe" } },
+        React.createElement("div", { style:{ fontSize:11, color:"var(--txt2)", marginBottom:4 } }, "Caixa livre disponível"),
+        React.createElement("div", { style:{ fontSize:20, fontWeight:700, color:"#6ea8fe" } }, fmt(saldoLivre))
+      )
+    ),
+    // Caixinhas cards
+    caixinhas.length === 0
+      ? React.createElement("div", { style:{ ...s.card, textAlign:"center", padding:32, marginBottom:16 } },
+          React.createElement("div", { style:{ fontSize:40, marginBottom:8 } }, "💰"),
+          React.createElement("div", { style:{ fontSize:15, fontWeight:600, color:"var(--txt)", marginBottom:4 } }, "Nenhuma caixinha criada"),
+          React.createElement("div", { style:{ fontSize:13, color:"var(--txt2)" } }, "Crie uma caixinha para guardar dinheiro do caixa livre")
+        )
+      : React.createElement("div", { style:{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))", gap:12, marginBottom:16 } },
+          ...caixinhas.map(cx => React.createElement("div", { key:cx.id, style:{ ...s.card, borderTop:`3px solid ${cx.cor}`, position:"relative" } },
+            React.createElement("button", { onClick: () => delCaixinha(cx.id), style:{ position:"absolute", top:8, right:8, background:"transparent", border:"none", color:"#E24B4A", cursor:"pointer", fontSize:16, lineHeight:1 } }, "✕"),
+            React.createElement("div", { style:{ fontSize:13, fontWeight:600, color:"var(--txt)", marginBottom:4 } }, cx.nome),
+            React.createElement("div", { style:{ fontSize:22, fontWeight:700, color:cx.cor, marginBottom:12 } }, fmt(cx.saldo||0)),
+            React.createElement("div", { style:{ display:"flex", gap:8 } },
+              React.createElement("button", { onClick: () => { setCxModal({cx,op:"deposito"}); setCxValor(""); }, style:{ flex:1, fontSize:12, padding:"6px", borderRadius:8, border:"none", background:"#1D9E75", color:"#fff", cursor:"pointer", fontWeight:600 } }, "↓ Guardar"),
+              React.createElement("button", { onClick: () => { setCxModal({cx,op:"retirada"}); setCxValor(""); }, style:{ flex:1, fontSize:12, padding:"6px", borderRadius:8, border:"none", background:"#EF9F27", color:"#fff", cursor:"pointer", fontWeight:600 } }, "↑ Retirar")
+            )
+          ))
+        ),
+    // Adicionar nova caixinha
+    React.createElement("div", { style:{ ...s.card, marginBottom:16, display:"flex", gap:8, alignItems:"center" } },
+      React.createElement("span", { style:{ fontSize:13, color:"var(--txt2)", whiteSpace:"nowrap" } }, "Nova caixinha:"),
+      React.createElement("input", { value:novaNome, onChange:e=>setNovaNome(e.target.value), onKeyDown:e=>e.key==="Enter"&&addCaixinha(), placeholder:"Nome da caixinha…", style:{ flex:1, fontSize:13, padding:"6px 10px", borderRadius:8, border:"1px solid var(--brd)", background:"var(--inp-bg)", color:"var(--txt)" } }),
+      React.createElement("button", { onClick:addCaixinha, style:{ background:"#EF9F27", color:"#fff", border:"none", borderRadius:8, padding:"6px 16px", fontSize:14, cursor:"pointer", fontWeight:700, whiteSpace:"nowrap" } }, "+ Criar")
+    ),
+    // Histórico de movimentos
+    React.createElement("div", { style:{ ...s.card } },
+      React.createElement("div", { style:{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 } },
+        React.createElement("div", { style:{ fontSize:14, fontWeight:600, color:"var(--txt)" } }, "📋 Histórico de movimentos"),
+        caixinhas.length > 0 && React.createElement("select", { value:cxSel, onChange:e=>setCxSel(e.target.value), style:{ fontSize:12, padding:"4px 8px", borderRadius:6, border:"1px solid var(--brd)", background:"var(--inp-bg)", color:"var(--txt)" } },
+          React.createElement("option", { value:"todas" }, "Todas as caixinhas"),
+          ...caixinhas.map(cx => React.createElement("option", { key:cx.id, value:String(cx.id) }, cx.nome))
+        )
+      ),
+      movFiltrado.length === 0
+        ? React.createElement("p", { style:{ fontSize:13, color:"var(--txt2)", textAlign:"center", padding:"20px 0" } }, "Nenhum movimento registrado")
+        : movFiltrado.map((m,i) => {
+            const cx = caixinhas.find(c => c.id === m.caixinhaId);
+            const cor = cx ? cx.cor : "#6ea8fe";
+            return React.createElement("div", { key:m.id||i, style:{ display:"flex", alignItems:"center", gap:12, padding:"8px 0", borderTop:"1px solid var(--brd)" } },
+              React.createElement("div", { style:{ width:32, height:32, borderRadius:"50%", background: m.op==="deposito" ? "#1D9E75" : "#EF9F27", display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, flexShrink:0 } },
+                m.op==="deposito" ? "↓" : "↑"
+              ),
+              React.createElement("div", { style:{ flex:1, minWidth:0 } },
+                React.createElement("div", { style:{ fontSize:13, fontWeight:600, color:"var(--txt)", display:"flex", gap:6, alignItems:"center" } },
+                  React.createElement("span", { style:{ width:8, height:8, borderRadius:"50%", background:cor, flexShrink:0, display:"inline-block" } }),
+                  m.caixinhaNome,
+                  React.createElement("span", { style:{ fontSize:11, color:"var(--txt2)", fontWeight:400 } }, m.op==="deposito" ? "Depósito" : "Retirada")
+                ),
+                React.createElement("div", { style:{ fontSize:11, color:"var(--txt2)" } }, fmtData(m.data))
+              ),
+              React.createElement("div", { style:{ fontSize:14, fontWeight:700, color: m.op==="deposito" ? "#1D9E75" : "#EF9F27", whiteSpace:"nowrap" } },
+                (m.op==="deposito" ? "−" : "+"), fmt(m.valor)
+              )
+            );
+          })
+    ),
+    // Modal operação
+    cxModal && React.createElement("div", { style:{ position:"fixed", inset:0, background:"rgba(0,0,0,0.6)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" }, onClick:()=>setCxModal(null) },
+      React.createElement("div", { style:{ background:"var(--bg2)", borderRadius:16, padding:24, width:300, maxWidth:"90vw" }, onClick:e=>e.stopPropagation() },
+        React.createElement("div", { style:{ fontSize:16, fontWeight:700, marginBottom:16, color:"var(--txt)" } },
+          cxModal.op==="deposito" ? "↓ Guardar em " : "↑ Retirar de ", cxModal.cx.nome
+        ),
+        cxModal.op==="deposito" && React.createElement("div", { style:{ fontSize:12, color:"var(--txt2)", marginBottom:8 } }, "Disponível no caixa livre: ", React.createElement("b", { style:{ color:"#6ea8fe" } }, fmt(saldoLivre))),
+        cxModal.op==="retirada" && React.createElement("div", { style:{ fontSize:12, color:"var(--txt2)", marginBottom:8 } }, "Saldo na caixinha: ", React.createElement("b", { style:{ color:cxModal.cx.cor } }, fmt(cxModal.cx.saldo||0))),
+        React.createElement("input", { type:"number", value:cxValor, onChange:e=>setCxValor(e.target.value), onKeyDown:e=>e.key==="Enter"&&handleCxOp(), placeholder:"Valor (R$)", autoFocus:true, style:{ width:"100%", padding:"10px 12px", borderRadius:8, border:"1px solid var(--brd)", background:"var(--inp-bg)", color:"var(--txt)", fontSize:16, marginBottom:16 } }),
+        React.createElement("div", { style:{ display:"flex", gap:8 } },
+          React.createElement("button", { onClick:()=>setCxModal(null), style:{ flex:1, padding:"10px", borderRadius:8, border:"1px solid var(--brd)", background:"var(--bg3)", color:"var(--txt)", cursor:"pointer", fontSize:14 } }, "Cancelar"),
+          React.createElement("button", { onClick:handleCxOp, style:{ flex:1, padding:"10px", borderRadius:8, border:"none", background:cxModal.op==="deposito"?"#1D9E75":"#EF9F27", color:"#fff", cursor:"pointer", fontSize:14, fontWeight:700 } },
+            cxModal.op==="deposito" ? "Guardar" : "Retirar"
+          )
+        )
+      )
+    )
+  );
+}
+
+function CaixinhasBlock({ caixinhas, setCaixinhas, cxOperar, saldoLivre, fmt, s }) {
   const [cxModal, setCxModal] = React.useState(null);
   const [cxValor, setCxValor] = React.useState("");
   const [novaNome, setNovaNome] = React.useState("");
@@ -1074,10 +1199,14 @@ function CaixinhasBlock({ caixinhas, setCaixinhas, saldoLivre, fmt, s }) {
     const op = cxModal.op;
     if (op === "deposito" && v > saldoLivre) { alert("Valor maior que o caixa livre disponível!"); return; }
     if (op === "retirada" && v > cxModal.cx.saldo) { alert("Valor maior que o saldo da caixinha!"); return; }
-    setCaixinhas(prev => prev.map(c => c.id === cxModal.cx.id
-      ? { ...c, saldo: (c.saldo || 0) + (op === "deposito" ? v : -v) }
-      : c
-    ));
+    if (cxOperar) {
+      cxOperar(cxModal.cx.id, op, v, cxModal.cx.nome);
+    } else {
+      setCaixinhas(prev => prev.map(c => c.id === cxModal.cx.id
+        ? { ...c, saldo: (c.saldo || 0) + (op === "deposito" ? v : -v) }
+        : c
+      ));
+    }
     setCxModal(null); setCxValor("");
   };
   const addCaixinha = () => {
@@ -1137,12 +1266,14 @@ function App() {
   const [nextId, setNextIdR] = useState(st?.nextId || 200);
   const [metas, setMetasR] = useState(st?.metas || {});
   const [caixinhas, setCaixinhasR] = useState(st?.caixinhas || []);
-  const p = (t, c, n, m, cx) => save({
+  const [cxMovimentos, setCxMovimentosR] = useState(st?.cxMovimentos || []);
+  const p = (t, c, n, m, cx, cxmov) => save({
     txs: t,
     cats: c,
     nextId: n,
     metas: m,
-    caixinhas: cx
+    caixinhas: cx,
+    cxMovimentos: cxmov !== undefined ? cxmov : cxMovimentos
   });
   const setTxs = v => {
     if (typeof v === "function") {
@@ -1196,13 +1327,41 @@ function App() {
     if (typeof v === "function") {
       setCaixinhasR(prev => {
         const val = v(prev);
-        p(txs, cats, nextId, metas, val);
+        p(txs, cats, nextId, metas, val, cxMovimentos);
         return val;
       });
     } else {
       setCaixinhasR(v);
-      p(txs, cats, nextId, metas, v);
+      p(txs, cats, nextId, metas, v, cxMovimentos);
     }
+  };
+  const setCxMovimentos = v => {
+    if (typeof v === "function") {
+      setCxMovimentosR(prev => {
+        const val = v(prev);
+        p(txs, cats, nextId, metas, caixinhas, val);
+        return val;
+      });
+    } else {
+      setCxMovimentosR(v);
+      p(txs, cats, nextId, metas, caixinhas, v);
+    }
+  };
+  // Wrapper que atualiza caixinhas + registra movimento num batch
+  const cxOperar = (cxId, op, valor, cxNome) => {
+    const v = parseFloat(String(valor).replace(",","."));
+    if (!v || v <= 0) return false;
+    const mov = { id: Date.now(), data: new Date().toISOString().slice(0,10), caixinhaId: cxId, caixinhaNome: cxNome, op, valor: v };
+    setCaixinhasR(prevCx => {
+      const novaCx = prevCx.map(c => c.id === cxId ? { ...c, saldo: (c.saldo||0) + (op==="deposito" ? v : -v) } : c);
+      setCxMovimentosR(prevMov => {
+        const novaMov = [mov, ...prevMov];
+        p(txs, cats, nextId, metas, novaCx, novaMov);
+        return novaMov;
+      });
+      return novaCx;
+    });
+    return true;
   };
 
   // ── State ──
@@ -1815,7 +1974,7 @@ function App() {
   useEffect(() => {
     const handle = e => {
       if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA") return;
-      const tabs = ["dashboard", "transacoes", "provisao", "cartoes", "extrato", "historico", "relatorio", "expectativas", "metas", "categorias"];
+      const tabs = ["dashboard", "transacoes", "provisao", "cartoes", "caixinhas", "extrato", "historico", "relatorio", "expectativas", "metas", "categorias"];
       if (e.key >= "1" && e.key <= "9" && tabs[e.key - 1]) setTab(tabs[e.key - 1]);
       if (e.key === "+" || e.key === "=") setFabOpen(o => !o);
     };
@@ -2730,6 +2889,7 @@ function App() {
         {k:"transacoes", label:"Transações", icon:"💳", desc:"Todos os lançamentos"},
         {k:"provisao", label:"Provisionamento", icon:"⏰", desc:"Contas a pagar e receber", getBadge:()=>vencidas.length>0?{n:vencidas.length,c:"#E24B4A"}:aV5.length>0?{n:aV5.length,c:"#EF9F27"}:null},
         {k:"cartoes", label:"Cartões", icon:"🃏", desc:"Faturas NuBank e Itaú"},
+        {k:"caixinhas", label:"Caixinhas", icon:"💰", desc:"Envelopes de investimento"},
       ]
     },
     {
@@ -3032,7 +3192,7 @@ function App() {
         marginTop: 4
       }
     }, /*#__PURE__*/React.createElement("span", null, "Poupan\xE7a"), /*#__PURE__*/React.createElement("span", null, "Comprometimento"), /*#__PURE__*/React.createElement("span", null, "Metas"))));
-  })(), React.createElement(CaixinhasBlock, { caixinhas, setCaixinhas, saldoLivre, fmt, s }), /*#__PURE__*/React.createElement("div", {
+  })(), React.createElement(CaixinhasBlock, { caixinhas, setCaixinhas, cxOperar, saldoLivre, fmt, s }), /*#__PURE__*/React.createElement("div", {
     style: {
       ...s.card,
       marginBottom: 12
@@ -4154,7 +4314,7 @@ function App() {
       color: "#6ea8fe",
       fontWeight: 600
     }
-  }, k), /*#__PURE__*/React.createElement("span", null, v)))))), tab === "extrato" && /*#__PURE__*/React.createElement("div", null,
+  }, k), /*#__PURE__*/React.createElement("span", null, v)))))), tab === "caixinhas" && React.createElement(CaixinhasTab, { caixinhas, setCaixinhas, cxMovimentos, cxOperar, saldoLivre, totalCaixinhas, fmt, s }), tab === "extrato" && /*#__PURE__*/React.createElement("div", null,
       /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
@@ -4280,7 +4440,11 @@ function App() {
   }), /*#__PURE__*/React.createElement(Bars, {
     data: bData
   })), m6.map((m, idx) => {
-    const lans = [...m.rP, ...m.rPv, ...m.dP, ...m.dPv].sort((a, b) => a.data.localeCompare(b.data));
+    const cxMovMes = cxMovimentos.filter(mv => mv.data && mv.data.startsWith(m.pfx)).map(mv => ({
+      id: "cx-"+mv.id, data: mv.data, desc: (mv.op==="deposito"?"↓ Guardar em ":"↑ Retirar de ")+mv.caixinhaNome,
+      valor: mv.valor, tipo: "caixinha", pago: true, _cxMov: mv
+    }));
+    const lans = [...m.rP, ...m.rPv, ...m.dP, ...m.dPv, ...cxMovMes].sort((a, b) => a.data.localeCompare(b.data));
     const ab = expandidos[idx] !== false;
     const pct2 = m.tRP + m.tRV > 0 ? Math.min(100, (m.tDP + m.tDV) / (m.tRP + m.tRV) * 100) : 0;
     const lim = limExtrato[idx] || 10;
@@ -4419,6 +4583,24 @@ function App() {
       }
     }, lans.slice(0, lim).map(t => {
       const pg = !!t.pago;
+      if (t.tipo === "caixinha") {
+        const mv = t._cxMov;
+        const isDeposito = mv.op === "deposito";
+        const cx = caixinhas.find(c => c.id === mv.caixinhaId);
+        const cor = cx ? cx.cor : "#c084fc";
+        return /*#__PURE__*/React.createElement("div", { key: t.id, style: { ...s.crow, background: "rgba(192,132,252,0.06)", borderRadius: 8 } },
+          React.createElement("div", { style:{ width:28, height:28, borderRadius:"50%", background: isDeposito ? "#1D9E7522" : "#EF9F2722", display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, flexShrink:0, color: isDeposito?"#1D9E75":"#EF9F27" } }, isDeposito ? "↓" : "↑"),
+          React.createElement("div", { style:{ flex:1, fontSize:13 } },
+            React.createElement("span", { style:{ color:"var(--txt)", fontWeight:500 } }, t.desc),
+            React.createElement("span", { style:{ background:"#c084fc22", color:"#c084fc", fontSize:10, padding:"2px 7px", borderRadius:20, fontWeight:600, marginLeft:6 } }, "Caixinha")
+          ),
+          React.createElement("div", { style:{ textAlign:"right", fontSize:13, flexShrink:0 } },
+            React.createElement("div", { style:{ color:cor, fontWeight:600 } }, (isDeposito?"−":"+")+fmt(t.valor)),
+            React.createElement("div", { style:{ fontSize:10, color:"var(--txt2)" } }, t.data)
+          ),
+          React.createElement("div", { style:{ width:26 } })
+        );
+      }
       return /*#__PURE__*/React.createElement("div", {
         key: t.id,
         style: s.crow
