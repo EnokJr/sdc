@@ -128,6 +128,13 @@ function AuthWrapper({ children }) {
     if (syncedUid.current === u.uid) return; // já sincronizou pra esse user
     syncedUid.current = u.uid;
     try {
+      // Se mudou de conta, limpa dados locais para não vazar dados entre usuários
+      const prevUid = localStorage.getItem(SYS_UID_KEY);
+      if (prevUid && prevUid !== u.uid) {
+        console.log("[SDC] Conta diferente detectada, limpando dados locais.");
+        localStorage.removeItem("sdc_v3");
+        localStorage.removeItem("sdc_onboarding_done");
+      }
       const cloudData = await loadFromCloud(u.uid);
       const localRaw = localStorage.getItem("sdc_v3");
       const local = localRaw ? JSON.parse(localRaw) : null;
@@ -2587,28 +2594,14 @@ function App() {
             localStorage.removeItem("sdc_onboarding_done");
             window.location.reload();
           }, color:"#60a5fa"},
-          {label:"🔍 Status do sync", action: async () => {
-            const u = (_fb && _fb.auth && _fb.auth.currentUser);
-            if (!u) { alert("Não logado — uid: " + (window._sdcUser && window._sdcUser.uid)); return; }
-            try {
-              const cloud = await loadFromCloud(u.uid);
-              const localRaw = localStorage.getItem("sdc_v3");
-              const local = localRaw ? JSON.parse(localRaw) : null;
-              const info = [
-                "=== STATUS SYNC ===",
-                `Cloud txs: ${cloud && cloud.txs ? cloud.txs.length : "nenhum"}`,
-                `Cloud _updatedAt: ${cloud && cloud._updatedAt ? new Date(cloud._updatedAt).toLocaleString("pt-BR") : "sem timestamp"}`,
-                `Local txs: ${local && local.txs ? local.txs.length : "nenhum"}`,
-                `Local _updatedAt: ${local && local._updatedAt ? new Date(local._updatedAt).toLocaleString("pt-BR") : "sem timestamp"}`,
-                `Último sync: ${window._sdcLastSync || "não disponível"}`
-              ].join("\n");
-              alert(info);
-            } catch(e) { alert("Erro: " + e.message); }
-          }, color:"#a78bfa"},
           {label:"📤 Exportar CSV", action: exportXL, color:"#1D9E75"},
           {label:"📥 Importar CSV", action: () => importRef.current?.click(), color:"var(--txt)"},
           {label:"💾 Backup JSON", action: backupJSON, color:"#378ADD"},
           {label:"♻️ Restaurar", action: () => restoreRef.current?.click(), color:"#EF9F27"},
+          {label:"🚪 Sair da conta", action: () => {
+            if (!confirm("Deseja sair da conta Google?\n\nSeus dados ficam salvos na nuvem.")) return;
+            if (_fb) _fb.auth.signOut().then(() => { window.location.reload(); });
+          }, color:"#ef4444"},
         ].map(({label, action, color}) =>
           /*#__PURE__*/React.createElement("button", {
             key: label,
