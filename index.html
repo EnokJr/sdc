@@ -125,15 +125,20 @@ function AuthWrapper({ children }) {
 
   async function doSync(u) {
     if (!u) { setSyncStatus("done"); return; }
+    // Detecta troca de conta: reseta o ref para forçar novo sync
+    const prevUid = localStorage.getItem(SYS_UID_KEY);
+    if (prevUid && prevUid !== u.uid) {
+      syncedUid.current = null;
+    }
     if (syncedUid.current === u.uid) return; // já sincronizou pra esse user
     syncedUid.current = u.uid;
     try {
       // Se mudou de conta, limpa dados locais para não vazar dados entre usuários
-      const prevUid = localStorage.getItem(SYS_UID_KEY);
       if (prevUid && prevUid !== u.uid) {
         console.log("[SDC] Conta diferente detectada, limpando dados locais.");
         localStorage.removeItem("sdc_v3");
         localStorage.removeItem("sdc_onboarding_done");
+        localStorage.removeItem(SYS_UID_KEY);
       }
       const cloudData = await loadFromCloud(u.uid);
       const localRaw = localStorage.getItem("sdc_v3");
@@ -2654,7 +2659,7 @@ function App() {
       ]
     },
     {
-      id: "config", label: "Configuração", icon: "⚙️",
+      id: "config", label: "Configuração", icon: "🛠️",
       items: [
         {k:"metas", label:"Metas", icon:"🎯", desc:"Tetos de gasto por categoria"},
         {k:"categorias", label:"Categorias", icon:"🏷️", desc:"Gráficos por categoria"},
