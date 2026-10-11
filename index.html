@@ -110,18 +110,28 @@ function AuthWrapper({ children }) {
       const local = localRaw ? JSON.parse(localRaw) : null;
       const cloudTs = (cloudData && cloudData._updatedAt) || 0;
       const localTs = (local && local._updatedAt) || 0;
-      console.log("[SDC] sync — cloudTs:", cloudTs, "localTs:", localTs);
-      if (cloudData && cloudData.txs && cloudTs > localTs) {
-        // Cloud mais novo → sobrescreve local
-        localStorage.setItem("sdc_v3", JSON.stringify(cloudData));
-        localStorage.setItem("sdc_onboarding_done", "1");
-        console.log("[SDC] cloud ganhou, dados atualizados");
-      } else if (local && local.txs && localTs > cloudTs) {
-        // Local mais novo → sobe pro cloud
+      const cloudTxCount = (cloudData && cloudData.txs && cloudData.txs.length) || 0;
+      const localTxCount = (local && local.txs && local.txs.length) || 0;
+      console.log("[SDC] sync — cloudTs:", cloudTs, "localTs:", localTs, "cloudTxs:", cloudTxCount, "localTxs:", localTxCount);
+      if (cloudData && cloudData.txs) {
+        // Se cloud tem dados e: (1) não há local, (2) cloud é mais novo, ou (3) cloud tem mais transações quando timestamps iguais
+        if (!local || !local.txs || cloudTs > localTs || (cloudTs === localTs && cloudTxCount > localTxCount)) {
+          localStorage.setItem("sdc_v3", JSON.stringify(cloudData));
+          localStorage.setItem("sdc_onboarding_done", "1");
+          console.log("[SDC] cloud ganhou, dados atualizados");
+        } else if (localTs > cloudTs || (localTs === cloudTs && localTxCount > cloudTxCount)) {
+          // Local mais novo → sobe pro cloud
+          await saveToCloud(u.uid, local);
+          console.log("[SDC] local ganhou, enviado pro cloud");
+        } else {
+          console.log("[SDC] dados iguais ou sem diferença");
+        }
+      } else if (local && local.txs) {
+        // Só tem local → sobe pro cloud
         await saveToCloud(u.uid, local);
-        console.log("[SDC] local ganhou, enviado pro cloud");
+        console.log("[SDC] só local, enviado pro cloud");
       } else {
-        console.log("[SDC] sem diferença ou ambos vazios");
+        console.log("[SDC] sem dados em nenhum lugar");
       }
       localStorage.setItem(SYS_UID_KEY, u.uid);
       window._sdcSaveToCloud = (data) => saveToCloud(u.uid, data);
@@ -2538,6 +2548,13 @@ function App() {
         }
       },
         [
+          {label:"🔄 Sincronizar da nuvem", action: () => {
+            if (!window._sdcUser) { alert("Faça login primeiro para sincronizar."); return; }
+            if (!confirm("Isso vai substituir os dados locais pelos dados da nuvem.\n\nContinuar?")) return;
+            localStorage.removeItem("sdc_v3");
+            localStorage.removeItem("sdc_onboarding_done");
+            window.location.reload();
+          }, color:"#60a5fa"},
           {label:"📤 Exportar CSV", action: exportXL, color:"#1D9E75"},
           {label:"📥 Importar CSV", action: () => importRef.current?.click(), color:"var(--txt)"},
           {label:"💾 Backup JSON", action: backupJSON, color:"#378ADD"},
