@@ -25,7 +25,7 @@ input,select,textarea{font-family:inherit;background:var(--inp-bg);border:1px so
 <script type="module">
 // ── Firebase Config ──
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, browserLocalPersistence, setPersistence }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -41,6 +41,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+setPersistence(auth, browserLocalPersistence).catch(e => console.warn("[SDC] setPersistence error:", e));
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 window._sdcFirebase = { auth, db, provider, signInWithPopup, signOut, onAuthStateChanged, doc, setDoc, getDoc };
@@ -2556,8 +2557,8 @@ function App() {
             window.location.reload();
           }, color:"#60a5fa"},
           {label:"🔍 Status do sync", action: async () => {
-            const u = window._sdcUser || (_fb && _fb.auth && _fb.auth.currentUser);
-            if (!u) { alert("Não logado"); return; }
+            const u = (_fb && _fb.auth && _fb.auth.currentUser);
+            if (!u) { alert("Não logado — uid: " + (window._sdcUser && window._sdcUser.uid)); return; }
             try {
               const cloud = await loadFromCloud(u.uid);
               const localRaw = localStorage.getItem("sdc_v3");
