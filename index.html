@@ -2549,7 +2549,8 @@ function App() {
       },
         [
           {label:"🔄 Sincronizar da nuvem", action: () => {
-            if (!window._sdcUser) { alert("Faça login primeiro para sincronizar."); return; }
+            const u = (_fb && _fb.auth && _fb.auth.currentUser) || window._sdcUser;
+            if (!u) { alert("Faça login primeiro para sincronizar."); return; }
             if (!confirm("Isso vai substituir os dados locais pelos dados da nuvem.\n\nContinuar?")) return;
             localStorage.removeItem("sdc_v3");
             localStorage.removeItem("sdc_onboarding_done");
