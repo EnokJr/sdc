@@ -10,7 +10,12 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{max-width:100%;overflow-x:hidden}
 .g4-resp{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px}
-@media(max-width:600px){.g4-resp{grid-template-columns:1fr 1fr}.hdr-desktop{display:none!important}}
+.g3-resp{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:600px){
+  .g4-resp{grid-template-columns:1fr 1fr}
+  .g3-resp{grid-template-columns:1fr 1fr}
+  .hdr-desktop{display:none!important}
+}
 body{font-family:sans-serif;min-height:100vh;transition:background .2s,color .2s}
 body.dark{background:#0f1117;color:#e8eaf0;--bg:#0f1117;--bg2:#161b27;--bg3:#1e2330;--brd:#2a2f3e;--txt:#e8eaf0;--txt2:#8892a4;--txt3:#c8cfd8;--inp-bg:#0f1117;--nav-act-bg:#1e2847;--nav-act-col:#6ea8fe;--nav-col:#8892a4;--card-val:#e8eaf0;--acc:#6ea8fe;--danger-bg:#2d1a1a;--warning-bg:#2a2000;--success-bg:#0d1a14;--danger-btn:#7f1d1d;--warning-btn:#78350f}
 body.light{background:#f5f6fa;color:#1a1f2e;--bg:#f5f6fa;--bg2:#ffffff;--bg3:#eef0f5;--brd:#d4d8e8;--txt:#1a1f2e;--txt2:#64748b;--txt3:#374151;--inp-bg:#ffffff;--nav-act-bg:#e8f0fe;--nav-act-col:#1a56db;--nav-col:#64748b;--card-val:#1a1f2e;--acc:#1a56db;--danger-bg:#fef2f2;--warning-bg:#fffbeb;--success-bg:#f0fdf4;--danger-btn:#dc2626;--warning-btn:#d97706}
@@ -365,9 +370,11 @@ const MesCards = ({
 }) => /*#__PURE__*/React.createElement("div", {
   style: {
     display: "grid",
-    gridTemplateColumns: `repeat(${data.length},1fr)`,
+    gridTemplateColumns: `repeat(${data.length}, minmax(80px, 1fr))`,
     gap: 8,
-    marginBottom: 16
+    marginBottom: 16,
+    overflowX: "auto",
+    paddingBottom: 4
   }
 }, data.map((d, i) => {
   const tR = (d["Rec. recebidas"] || 0) + (d["Rec. previstas"] || 0),
@@ -3609,7 +3616,7 @@ function App() {
         onChange: e => setBuscaProv(e.target.value)
       })
     ), /*#__PURE__*/React.createElement("div", {
-    style: s.g4
+    className: "g4-resp"
   }, /*#__PURE__*/React.createElement("div", {
     style: s.card
   }, /*#__PURE__*/React.createElement("div", {
@@ -3792,12 +3799,8 @@ function App() {
         color: cartao.color
       }
     }, fmt(tPago + tPend)))), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr 1fr",
-        gap: 12,
-        marginBottom: 16
-      }
+      className: "g3-resp",
+      style: {marginBottom: 16}
     }, /*#__PURE__*/React.createElement("div", {
       style: {
         background: "var(--bg)",
@@ -3975,16 +3978,7 @@ function App() {
       fontWeight: 600
     }
   }, k), /*#__PURE__*/React.createElement("span", null, v)))))), tab === "extrato" && /*#__PURE__*/React.createElement("div", null,
-      /*#__PURE__*/React.createElement("div", {style:{display:"flex",gap:8,marginBottom:12}},
-        /*#__PURE__*/React.createElement("button", {
-          style: s.bsm("#1e2847"),
-          onClick: () => setExpandidos({0:true,1:true,2:true,3:true,4:true,5:true})
-        }, "Expandir todos"),
-        /*#__PURE__*/React.createElement("button", {
-          style: s.bsm("#1e2330"),
-          onClick: () => setExpandidos({0:false,1:false,2:false,3:false,4:false,5:false})
-        }, "Recolher todos")
-      ), /*#__PURE__*/React.createElement("div", {
+      /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       justifyContent: "space-between",
@@ -4177,12 +4171,7 @@ function App() {
         color: m.saldo >= 0 ? "#1D9E75" : "#E24B4A"
       }
     }, fmt(m.saldo)))), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr 1fr 1fr",
-        gap: 8,
-        marginBottom: 10
-      }
+      className: "g4-resp", style: {marginBottom: 10}
     }, [["Rec. rec.", m.tRP, "#1D9E75"], ["Rec. prev.", m.tRV, "#378ADD"], ["Des. pagas", m.tDP, "#E24B4A"], ["Des. prev.", m.tDV, "#EF9F27"]].map(([l, v, c]) => /*#__PURE__*/React.createElement("div", {
       key: l,
       style: {
@@ -4449,10 +4438,8 @@ function App() {
       onClick: () => reabrirMes(pfx),
       style: s.bsm("var(--bg3)")
     }, "Reabrir"))), !f && /*#__PURE__*/React.createElement("div", {
+      className: "g4-resp",
       style: {
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr 1fr 1fr",
-        gap: 8,
         marginTop: 12
       }
     }, /*#__PURE__*/React.createElement("div", {
@@ -4654,12 +4641,7 @@ function App() {
         color: m.saldo >= 0 ? "#1D9E75" : "#E24B4A"
       }
     }, fmt(m.saldo)))), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr 1fr 1fr",
-        gap: 8,
-        marginBottom: 10
-      }
+      className: "g4-resp", style: {marginBottom: 10}
     }, [["Rec. rec.", m.tRP, "#1D9E75"], ["Rec. prev.", m.tRV, "#378ADD"], ["Des. pagas", m.tDP, "#E24B4A"], ["Des. prev.", m.tDV, "#EF9F27"]].map(([l, v, c]) => /*#__PURE__*/React.createElement("div", {
       key: l,
       style: {
@@ -4760,7 +4742,7 @@ function App() {
       marginTop: 2
     }
   }, "Real vs previsto \u2014 5 meses passados + atual + 6 futuros")), /*#__PURE__*/React.createElement("div", {
-    style: s.g4
+    className: "g4-resp"
   }, /*#__PURE__*/React.createElement("div", {
     style: s.card
   }, /*#__PURE__*/React.createElement("div", {
