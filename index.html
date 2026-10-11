@@ -107,19 +107,20 @@ function AuthWrapper({ children }) {
       if (u && !cloudLoaded) {
         try {
           const cloudData = await loadFromCloud(u.uid);
-          if (cloudData && cloudData.txs) {
-            const localRaw = localStorage.getItem("sdc_v3");
-            const local = localRaw ? JSON.parse(localRaw) : null;
-            const cloudTs = cloudData._updatedAt || 0;
-            const localTs = local ? (local._updatedAt || 0) : 0;
-            if (cloudTs >= localTs) {
-              const { _updatedAt, ...clean } = cloudData;
-              localStorage.setItem("sdc_v3", JSON.stringify({...clean, _updatedAt: cloudTs}));
-              localStorage.setItem("sdc_onboarding_done", "1");
-            }
+          const localRaw = localStorage.getItem("sdc_v3");
+          const local = localRaw ? JSON.parse(localRaw) : null;
+          const cloudTs = (cloudData && cloudData._updatedAt) || 0;
+          const localTs = local ? (local._updatedAt || 0) : 0;
+          if (cloudData && cloudData.txs && cloudTs >= localTs) {
+            // Cloud é mais novo — usa cloud
+            localStorage.setItem("sdc_v3", JSON.stringify(cloudData));
+            localStorage.setItem("sdc_onboarding_done", "1");
+          } else if (local && local.txs && localTs > cloudTs) {
+            // Local é mais novo — envia pro cloud
+            await saveToCloud(u.uid, local);
           }
           localStorage.setItem(SYS_UID_KEY, u.uid);
-        } catch(e) { console.warn("[SDC] Load from cloud error:", e); }
+        } catch(e) { console.warn("[SDC] Sync error:", e); }
         setCloudLoaded(true);
       } else if (!u) { setCloudLoaded(true); }
     });
@@ -302,9 +303,11 @@ const load = () => {
   return null;
 };
 const save = d => {
-  if (window._sdcSaveToCloud) { try { window._sdcSaveToCloud(d); } catch(e) {} }
+  const ts = Date.now();
+  const dWithTs = { ...d, _updatedAt: ts };
+  if (window._sdcSaveToCloud) { try { window._sdcSaveToCloud(dWithTs); } catch(e) {} }
   try {
-    localStorage.setItem(SK, JSON.stringify(d));
+    localStorage.setItem(SK, JSON.stringify(dWithTs));
   } catch (e) {
     if (e.name === "QuotaExceededError" || e.code === 22) setTimeout(() => alert("Armazenamento local cheio! Exporte seus dados."), 100);
   }
