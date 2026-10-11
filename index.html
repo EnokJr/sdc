@@ -1121,6 +1121,7 @@ function App() {
   const [navOpen, setNavOpen] = React.useState(null);
   const [globalSearch, setGlobalSearch] = React.useState("");
   const [showGlobalSearch, setShowGlobalSearch] = React.useState(false);
+  const [showToolsMenu, setShowToolsMenu] = React.useState(false);
   const [catSel, setCatSel] = React.useState("alimentacao");
   const [editTx, setEditTx] = useState(null);
   const [formErros, setFormErros] = React.useState({});
@@ -2471,69 +2472,61 @@ function App() {
       fontSize: 12,
       color: "#378ADD"
     }
-  }, importMsg), /*#__PURE__*/React.createElement("div", {
-    className: "hdr-desktop",
-    style: {
-      display: "flex",
-      gap: 6,
-      alignItems: "center",
-      marginRight: 4,
-      paddingRight: 10,
-      borderRight: "1px solid #2a2f3e"
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 11,
-      color: "var(--txt2)"
-    }
-  }, "Projetado"), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 13,
-      fontWeight: 600,
-      color: saldoProj >= 0 ? "#1D9E75" : "#E24B4A"
-    }
-  }, fmt(saldoProj))),
-    /*#__PURE__*/React.createElement("div", {className:"hdr-desktop",style:{display:"flex",gap:6,alignItems:"center"}},
-      /*#__PURE__*/React.createElement("button", {
-        onClick: exportXL,
-        style: s.bsm("#0f6e56")
-      }, "Exportar CSV"),
-      /*#__PURE__*/React.createElement("button", {
-        onClick: () => importRef.current?.click(),
-        style: s.bsm("#1e2847")
-      }, "Importar CSV"),
-      /*#__PURE__*/React.createElement("input", {
-        ref: importRef,
-        type: "file",
-        accept: ".csv,.txt",
-        style: {display: "none"},
-        onChange: handleImport
-      }),
-      /*#__PURE__*/React.createElement("button", {
-        onClick: backupJSON,
-        style: s.bsm("#0f3d6e")
-      }, "Backup"),
-      /*#__PURE__*/React.createElement("input", {
-        ref: restoreRef,
-        type: "file",
-        accept: ".json",
-        style: {display: "none"},
-        onChange: restoreJSON
-      }),
-      /*#__PURE__*/React.createElement("button", {
-        onClick: () => restoreRef.current?.click(),
-        style: s.bsm("#1e2330")
-      }, "Restaurar")
-    ),
+  }, importMsg),
+    /*#__PURE__*/React.createElement("input", {
+      ref: importRef, type: "file", accept: ".csv,.txt",
+      style: {display:"none"}, onChange: handleImport
+    }),
+    /*#__PURE__*/React.createElement("input", {
+      ref: restoreRef, type: "file", accept: ".json",
+      style: {display:"none"}, onChange: restoreJSON
+    }),
     /*#__PURE__*/React.createElement("button", {
       onClick: () => setShowGlobalSearch(true),
-      style: s.bsm("#1e2847"),
-      title: "Busca global (Ctrl+K)"
+      style: s.bsm("#1e2847"), title: "Busca global (Ctrl+K)"
     }, "🔍"),
+    /*#__PURE__*/React.createElement("div", {style:{position:"relative"}},
+      /*#__PURE__*/React.createElement("button", {
+        onClick: () => setShowToolsMenu(m => !m),
+        style: s.bsm("#1e2847"), title: "Ferramentas"
+      }, "⚙️"),
+      showToolsMenu && /*#__PURE__*/React.createElement(React.Fragment, null,
+        /*#__PURE__*/React.createElement("div", {
+          onClick: () => setShowToolsMenu(false),
+          style: {position:"fixed",inset:0,zIndex:999}
+        }),
+        /*#__PURE__*/React.createElement("div", {
+          style: {
+            position:"absolute", right:0, top:"calc(100% + 6px)", zIndex:1000,
+            background:"var(--bg2)", border:"1px solid var(--brd)",
+            borderRadius:8, padding:"6px 0", minWidth:160,
+            boxShadow:"0 4px 20px rgba(0,0,0,0.4)"
+          }
+        },
+          [
+            {label:"📤 Exportar CSV", action: exportXL, color:"#1D9E75"},
+            {label:"📥 Importar CSV", action: () => importRef.current?.click(), color:"var(--txt)"},
+            {label:"💾 Backup JSON", action: backupJSON, color:"#378ADD"},
+            {label:"♻️ Restaurar", action: () => restoreRef.current?.click(), color:"#EF9F27"},
+          ].map(({label, action, color}) =>
+            /*#__PURE__*/React.createElement("button", {
+              key: label,
+              onClick: () => { action(); setShowToolsMenu(false); },
+              style: {
+                display:"block", width:"100%", textAlign:"left",
+                padding:"10px 16px", background:"none", border:"none",
+                color, fontSize:13, cursor:"pointer", whiteSpace:"nowrap"
+              },
+              onMouseEnter: e => e.currentTarget.style.background="var(--bg3)",
+              onMouseLeave: e => e.currentTarget.style.background="none"
+            }, label)
+          )
+        )
+      )
+    ),
     /*#__PURE__*/React.createElement("button", {
       onClick: () => setDarkMode(d => !d),
-      style: s.bsm("#1e2330"),
-      title: darkMode ? "Modo claro" : "Modo escuro"
+      style: s.bsm("#1e2330"), title: darkMode ? "Modo claro" : "Modo escuro"
     }, darkMode ? "☀️" : "🌙"))), /*#__PURE__*/React.createElement("div", {
     style: {
     background: "var(--bg2)",
