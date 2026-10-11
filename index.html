@@ -2548,12 +2548,12 @@ function App() {
         }
       },
         [
-          ...(_fb ? [{label:"🔄 Sincronizar da nuvem", action: () => {
+          {label:"🔄 Sincronizar da nuvem", action: () => {
             if (!confirm("Isso vai substituir os dados locais pelos dados da nuvem.\n\nContinuar?")) return;
             localStorage.removeItem("sdc_v3");
             localStorage.removeItem("sdc_onboarding_done");
             window.location.reload();
-          }, color:"#60a5fa"}] : []),
+          }, color:"#60a5fa"},
           {label:"📤 Exportar CSV", action: exportXL, color:"#1D9E75"},
           {label:"📥 Importar CSV", action: () => importRef.current?.click(), color:"var(--txt)"},
           {label:"💾 Backup JSON", action: backupJSON, color:"#378ADD"},
