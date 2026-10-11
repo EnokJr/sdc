@@ -4364,6 +4364,8 @@ function App() {
       tDv = m6.reduce((a, m) => a + m.tDV, 0),
       tS = tRp + tRv - (tDp + tDv),
       pct = Math.min(100, (tDp + tDv) / (tRp + tRv || 1) * 100);
+    const tCxDepositos = cxMovimentos.reduce((a, mv) => a + (mv.op==="deposito" ? mv.valor : 0), 0);
+    const tCxRetiradas = cxMovimentos.reduce((a, mv) => a + (mv.op==="retirada" ? mv.valor : 0), 0);
     return /*#__PURE__*/React.createElement("div", {
       style: {
         ...s.card,
@@ -4402,7 +4404,14 @@ function App() {
         fontWeight: 500,
         color: c
       }
-    }, fmt(v))))), /*#__PURE__*/React.createElement("div", {
+    }, fmt(v))))),
+    (tCxDepositos > 0 || tCxRetiradas > 0) && React.createElement("div", { style:{ marginTop:10, padding:"8px 10px", background:"rgba(192,132,252,0.08)", borderRadius:8, display:"flex", gap:16, alignItems:"center", flexWrap:"wrap" } },
+      React.createElement("span", { style:{ fontSize:11, color:"#c084fc", fontWeight:600 } }, "💰 Caixinhas"),
+      React.createElement("span", { style:{ fontSize:12, color:"var(--txt2)" } }, "Guardado: ", React.createElement("span", { style:{ color:"#c084fc", fontWeight:600 } }, fmt(tCxDepositos))),
+      React.createElement("span", { style:{ fontSize:12, color:"var(--txt2)" } }, "Retirado: ", React.createElement("span", { style:{ color:"#EF9F27", fontWeight:600 } }, fmt(tCxRetiradas))),
+      React.createElement("span", { style:{ fontSize:12, color:"var(--txt2)" } }, "Saldo nas caixinhas: ", React.createElement("span", { style:{ color:"#c084fc", fontWeight:700 } }, fmt(totalCaixinhas)))
+    ),
+    /*#__PURE__*/React.createElement("div", {
       style: {
         marginTop: 12
       }
@@ -4511,28 +4520,29 @@ function App() {
         fontWeight: 500,
         color: m.saldo >= 0 ? "#1D9E75" : "#E24B4A"
       }
-    }, fmt(m.saldo)))), /*#__PURE__*/React.createElement("div", {
-      className: "g4-resp", style: {marginBottom: 10}
-    }, [["Rec. rec.", m.tRP, "#1D9E75"], ["Rec. prev.", m.tRV, "#378ADD"], ["Des. pagas", m.tDP, "#E24B4A"], ["Des. prev.", m.tDV, "#EF9F27"]].map(([l, v, c]) => /*#__PURE__*/React.createElement("div", {
-      key: l,
-      style: {
-        background: "var(--bg)",
-        borderRadius: 8,
-        padding: "8px 10px"
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        fontSize: 10,
-        color: "var(--txt2)",
-        marginBottom: 3
-      }
-    }, l), /*#__PURE__*/React.createElement("div", {
-      style: {
-        fontSize: 13,
-        fontWeight: 500,
-        color: v > 0 ? c : "#444"
-      }
-    }, fmt(v))))), m.tRP + m.tRV > 0 && /*#__PURE__*/React.createElement("div", {
+    }, fmt(m.saldo)))), (() => {
+      const cxMovDoMes = cxMovimentos.filter(mv => mv.data && mv.data.startsWith(m.pfx));
+      const cxDepMes = cxMovDoMes.reduce((a,mv) => a+(mv.op==="deposito"?mv.valor:0), 0);
+      const cxRetMes = cxMovDoMes.reduce((a,mv) => a+(mv.op==="retirada"?mv.valor:0), 0);
+      const temCx = cxMovDoMes.length > 0;
+      return React.createElement(React.Fragment, null,
+        /*#__PURE__*/React.createElement("div", {
+          className: "g4-resp", style: {marginBottom: temCx ? 6 : 10}
+        }, [["Rec. rec.", m.tRP, "#1D9E75"], ["Rec. prev.", m.tRV, "#378ADD"], ["Des. pagas", m.tDP, "#E24B4A"], ["Des. prev.", m.tDV, "#EF9F27"]].map(([l, v, c]) => /*#__PURE__*/React.createElement("div", {
+          key: l,
+          style: { background: "var(--bg)", borderRadius: 8, padding: "8px 10px" }
+        }, /*#__PURE__*/React.createElement("div", {
+          style: { fontSize: 10, color: "var(--txt2)", marginBottom: 3 }
+        }, l), /*#__PURE__*/React.createElement("div", {
+          style: { fontSize: 13, fontWeight: 500, color: v > 0 ? c : "#444" }
+        }, fmt(v))))),
+        temCx && React.createElement("div", { style:{ display:"flex", gap:12, marginBottom:8, padding:"5px 8px", background:"rgba(192,132,252,0.08)", borderRadius:8, flexWrap:"wrap", alignItems:"center" } },
+          React.createElement("span", { style:{ fontSize:10, color:"#c084fc", fontWeight:700 } }, "💰 Caixinhas"),
+          cxDepMes > 0 && React.createElement("span", { style:{ fontSize:11, color:"var(--txt2)" } }, "Guardado: ", React.createElement("span", { style:{ color:"#c084fc", fontWeight:600 } }, fmt(cxDepMes))),
+          cxRetMes > 0 && React.createElement("span", { style:{ fontSize:11, color:"var(--txt2)" } }, "Retirado: ", React.createElement("span", { style:{ color:"#EF9F27", fontWeight:600 } }, fmt(cxRetMes)))
+        )
+      );
+    })(), m.tRP + m.tRV > 0 && /*#__PURE__*/React.createElement("div", {
       style: {
         marginBottom: 8
       }
@@ -4999,28 +5009,29 @@ function App() {
         fontWeight: 500,
         color: m.saldo >= 0 ? "#1D9E75" : "#E24B4A"
       }
-    }, fmt(m.saldo)))), /*#__PURE__*/React.createElement("div", {
-      className: "g4-resp", style: {marginBottom: 10}
-    }, [["Rec. rec.", m.tRP, "#1D9E75"], ["Rec. prev.", m.tRV, "#378ADD"], ["Des. pagas", m.tDP, "#E24B4A"], ["Des. prev.", m.tDV, "#EF9F27"]].map(([l, v, c]) => /*#__PURE__*/React.createElement("div", {
-      key: l,
-      style: {
-        background: "var(--bg)",
-        borderRadius: 8,
-        padding: "8px 10px"
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        fontSize: 10,
-        color: "var(--txt2)",
-        marginBottom: 3
-      }
-    }, l), /*#__PURE__*/React.createElement("div", {
-      style: {
-        fontSize: 13,
-        fontWeight: 500,
-        color: v > 0 ? c : "#444"
-      }
-    }, fmt(v))))), /*#__PURE__*/React.createElement("div", {
+    }, fmt(m.saldo)))), (() => {
+      const cxMovDoMes = cxMovimentos.filter(mv => mv.data && mv.data.startsWith(m.pfx));
+      const cxDepMes = cxMovDoMes.reduce((a,mv) => a+(mv.op==="deposito"?mv.valor:0), 0);
+      const cxRetMes = cxMovDoMes.reduce((a,mv) => a+(mv.op==="retirada"?mv.valor:0), 0);
+      const temCx = cxMovDoMes.length > 0;
+      return React.createElement(React.Fragment, null,
+        /*#__PURE__*/React.createElement("div", {
+          className: "g4-resp", style: {marginBottom: temCx ? 6 : 10}
+        }, [["Rec. rec.", m.tRP, "#1D9E75"], ["Rec. prev.", m.tRV, "#378ADD"], ["Des. pagas", m.tDP, "#E24B4A"], ["Des. prev.", m.tDV, "#EF9F27"]].map(([l, v, c]) => /*#__PURE__*/React.createElement("div", {
+          key: l,
+          style: { background: "var(--bg)", borderRadius: 8, padding: "8px 10px" }
+        }, /*#__PURE__*/React.createElement("div", {
+          style: { fontSize: 10, color: "var(--txt2)", marginBottom: 3 }
+        }, l), /*#__PURE__*/React.createElement("div", {
+          style: { fontSize: 13, fontWeight: 500, color: v > 0 ? c : "#444" }
+        }, fmt(v))))),
+        temCx && React.createElement("div", { style:{ display:"flex", gap:12, marginBottom:8, padding:"5px 8px", background:"rgba(192,132,252,0.08)", borderRadius:8, flexWrap:"wrap", alignItems:"center" } },
+          React.createElement("span", { style:{ fontSize:10, color:"#c084fc", fontWeight:700 } }, "💰 Caixinhas"),
+          cxDepMes > 0 && React.createElement("span", { style:{ fontSize:11, color:"var(--txt2)" } }, "Guardado: ", React.createElement("span", { style:{ color:"#c084fc", fontWeight:600 } }, fmt(cxDepMes))),
+          cxRetMes > 0 && React.createElement("span", { style:{ fontSize:11, color:"var(--txt2)" } }, "Retirado: ", React.createElement("span", { style:{ color:"#EF9F27", fontWeight:600 } }, fmt(cxRetMes)))
+        )
+      );
+    })(), /*#__PURE__*/React.createElement("div", {
       style: {
         marginBottom: 8
       }
