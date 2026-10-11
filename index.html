@@ -1062,6 +1062,74 @@ const ListLimit = ({
     }
   }, "Recolher"))));
 };
+function CaixinhasBlock({ caixinhas, setCaixinhas, saldoLivre, fmt, s }) {
+  const [cxModal, setCxModal] = React.useState(null);
+  const [cxValor, setCxValor] = React.useState("");
+  const [novaNome, setNovaNome] = React.useState("");
+  const CX_CORES = ["#6ea8fe","#1D9E75","#EF9F27","#E24B4A","#c084fc","#f97316","#38bdf8","#a3e635"];
+  const handleCxOp = () => {
+    if (!cxModal) return;
+    const v = parseFloat(cxValor.replace(",","."));
+    if (!v || v <= 0) return;
+    const op = cxModal.op;
+    if (op === "deposito" && v > saldoLivre) { alert("Valor maior que o caixa livre disponível!"); return; }
+    if (op === "retirada" && v > cxModal.cx.saldo) { alert("Valor maior que o saldo da caixinha!"); return; }
+    setCaixinhas(prev => prev.map(c => c.id === cxModal.cx.id
+      ? { ...c, saldo: (c.saldo || 0) + (op === "deposito" ? v : -v) }
+      : c
+    ));
+    setCxModal(null); setCxValor("");
+  };
+  const addCaixinha = () => {
+    const nome = novaNome.trim();
+    if (!nome) return;
+    const cor = CX_CORES[caixinhas.length % CX_CORES.length];
+    setCaixinhas(prev => [...prev, { id: Date.now(), nome, saldo: 0, cor }]);
+    setNovaNome("");
+  };
+  const delCaixinha = (id) => {
+    const cx = caixinhas.find(c => c.id === id);
+    if (cx && cx.saldo > 0 && !confirm(`Tem ${fmt(cx.saldo)} nessa caixinha. O valor volta pro caixa livre. Confirmar exclusão?`)) return;
+    setCaixinhas(prev => prev.filter(c => c.id !== id));
+  };
+  return React.createElement(React.Fragment, null,
+    React.createElement("div", { style: { ...s.card, marginBottom: 12, padding: "12px 16px" } },
+      React.createElement("div", { style: { display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom: caixinhas.length ? 12 : 0 } },
+        React.createElement("span", { style: { fontSize:13, fontWeight:600, color:"var(--txt)" } }, "💰 Caixinhas de investimento"),
+        React.createElement("div", { style: { display:"flex", gap:6, alignItems:"center" } },
+          React.createElement("input", { value: novaNome, onChange: e => setNovaNome(e.target.value), onKeyDown: e => e.key==="Enter" && addCaixinha(), placeholder:"Nova caixinha…", style:{ fontSize:12, padding:"4px 8px", borderRadius:6, border:"1px solid var(--brd)", background:"var(--inp-bg)", color:"var(--txt)", width:130 } }),
+          React.createElement("button", { onClick: addCaixinha, style:{ background:"#EF9F27", color:"#fff", border:"none", borderRadius:6, padding:"4px 10px", fontSize:13, cursor:"pointer", fontWeight:600 } }, "+")
+        )
+      ),
+      caixinhas.length === 0 && React.createElement("p", { style:{ fontSize:12, color:"var(--txt2)", marginTop:8 } }, "Nenhuma caixinha de investimento criada. Crie uma para guardar dinheiro do caixa livre."),
+      caixinhas.map(cx => React.createElement("div", { key: cx.id, style:{ display:"flex", alignItems:"center", gap:10, padding:"8px 0", borderTop:"1px solid var(--brd)" } },
+        React.createElement("div", { style:{ width:10, height:10, borderRadius:"50%", background: cx.cor, flexShrink:0 } }),
+        React.createElement("div", { style:{ flex:1 } },
+          React.createElement("div", { style:{ fontSize:13, fontWeight:600, color:"var(--txt)" } }, cx.nome),
+          React.createElement("div", { style:{ fontSize:12, color: cx.cor, fontWeight:700 } }, fmt(cx.saldo || 0))
+        ),
+        React.createElement("button", { onClick: () => { setCxModal({ cx, op:"deposito" }); setCxValor(""); }, style:{ fontSize:11, padding:"3px 8px", borderRadius:6, border:"1px solid var(--brd)", background:"var(--bg3)", color:"var(--txt)", cursor:"pointer" } }, "↓ Guardar"),
+        React.createElement("button", { onClick: () => { setCxModal({ cx, op:"retirada" }); setCxValor(""); }, style:{ fontSize:11, padding:"3px 8px", borderRadius:6, border:"1px solid var(--brd)", background:"var(--bg3)", color:"var(--txt)", cursor:"pointer" } }, "↑ Retirar"),
+        React.createElement("button", { onClick: () => delCaixinha(cx.id), style:{ fontSize:11, padding:"3px 6px", borderRadius:6, border:"none", background:"transparent", color:"#E24B4A", cursor:"pointer" } }, "✕")
+      ))
+    ),
+    cxModal && React.createElement("div", { style:{ position:"fixed", inset:0, background:"rgba(0,0,0,0.6)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" }, onClick: () => setCxModal(null) },
+      React.createElement("div", { style:{ background:"var(--bg2)", borderRadius:16, padding:24, width:300, maxWidth:"90vw" }, onClick: e => e.stopPropagation() },
+        React.createElement("div", { style:{ fontSize:16, fontWeight:700, marginBottom:16, color:"var(--txt)" } },
+          cxModal.op === "deposito" ? "↓ Guardar em " : "↑ Retirar de ", cxModal.cx.nome
+        ),
+        cxModal.op === "deposito" && React.createElement("div", { style:{ fontSize:12, color:"var(--txt2)", marginBottom:8 } }, "Disponível no caixa livre: ", React.createElement("b", { style:{ color:"#6ea8fe" } }, fmt(saldoLivre))),
+        cxModal.op === "retirada" && React.createElement("div", { style:{ fontSize:12, color:"var(--txt2)", marginBottom:8 } }, "Saldo na caixinha: ", React.createElement("b", { style:{ color: cxModal.cx.cor } }, fmt(cxModal.cx.saldo || 0))),
+        React.createElement("input", { type:"number", value: cxValor, onChange: e => setCxValor(e.target.value), placeholder:"Valor (R$)", autoFocus:true, style:{ width:"100%", padding:"10px 12px", borderRadius:8, border:"1px solid var(--brd)", background:"var(--inp-bg)", color:"var(--txt)", fontSize:16, marginBottom:16 } }),
+        React.createElement("div", { style:{ display:"flex", gap:8 } },
+          React.createElement("button", { onClick: () => setCxModal(null), style:{ flex:1, padding:"10px", borderRadius:8, border:"1px solid var(--brd)", background:"var(--bg3)", color:"var(--txt)", cursor:"pointer", fontSize:14 } }, "Cancelar"),
+          React.createElement("button", { onClick: handleCxOp, style:{ flex:1, padding:"10px", borderRadius:8, border:"none", background: cxModal.op==="deposito" ? "#1D9E75" : "#EF9F27", color:"#fff", cursor:"pointer", fontSize:14, fontWeight:700 } }, cxModal.op === "deposito" ? "Guardar" : "Retirar")
+        )
+      )
+    )
+  );
+}
+
 function App() {
   const st = load();
   const [txs, setTxsR] = useState(st?.txs || INITIAL_TX);
@@ -2964,73 +3032,7 @@ function App() {
         marginTop: 4
       }
     }, /*#__PURE__*/React.createElement("span", null, "Poupan\xE7a"), /*#__PURE__*/React.createElement("span", null, "Comprometimento"), /*#__PURE__*/React.createElement("span", null, "Metas"))));
-  })(), (() => {
-    const [cxModal, setCxModal] = React.useState(null); // {cx, op:"deposito"|"retirada"}
-    const [cxValor, setCxValor] = React.useState("");
-    const [novaNome, setNovaNome] = React.useState("");
-    const CX_CORES = ["#6ea8fe","#1D9E75","#EF9F27","#E24B4A","#c084fc","#f97316","#38bdf8","#a3e635"];
-    const handleCxOp = () => {
-      if (!cxModal) return;
-      const v = parseFloat(cxValor.replace(",","."));
-      if (!v || v <= 0) return;
-      const op = cxModal.op;
-      if (op === "deposito" && v > saldoLivre) { alert("Valor maior que o caixa livre disponível!"); return; }
-      if (op === "retirada" && v > cxModal.cx.saldo) { alert("Valor maior que o saldo da caixinha!"); return; }
-      setCaixinhas(prev => prev.map(c => c.id === cxModal.cx.id
-        ? { ...c, saldo: (c.saldo || 0) + (op === "deposito" ? v : -v) }
-        : c
-      ));
-      setCxModal(null); setCxValor("");
-    };
-    const addCaixinha = () => {
-      const nome = novaNome.trim();
-      if (!nome) return;
-      const cor = CX_CORES[caixinhas.length % CX_CORES.length];
-      setCaixinhas(prev => [...prev, { id: Date.now(), nome, saldo: 0, cor }]);
-      setNovaNome("");
-    };
-    const delCaixinha = (id) => {
-      const cx = caixinhas.find(c => c.id === id);
-      if (cx && cx.saldo > 0 && !confirm(`Tem ${fmt(cx.saldo)} nessa caixinha. O valor volta pro caixa livre. Confirmar exclusão?`)) return;
-      setCaixinhas(prev => prev.filter(c => c.id !== id));
-    };
-    return React.createElement(React.Fragment, null,
-      React.createElement("div", { style: { ...s.card, marginBottom: 12, padding: "12px 16px" } },
-        React.createElement("div", { style: { display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom: caixinhas.length ? 12 : 0 } },
-          React.createElement("span", { style: { fontSize:13, fontWeight:600, color:"var(--txt)" } }, "💰 Caixinhas de investimento"),
-          React.createElement("div", { style: { display:"flex", gap:6, alignItems:"center" } },
-            React.createElement("input", { value: novaNome, onChange: e => setNovaNome(e.target.value), onKeyDown: e => e.key==="Enter" && addCaixinha(), placeholder:"Nova caixinha…", style:{ fontSize:12, padding:"4px 8px", borderRadius:6, border:"1px solid var(--brd)", background:"var(--inp-bg)", color:"var(--txt)", width:130 } }),
-            React.createElement("button", { onClick: addCaixinha, style:{ background:"#EF9F27", color:"#fff", border:"none", borderRadius:6, padding:"4px 10px", fontSize:13, cursor:"pointer", fontWeight:600 } }, "+")
-          )
-        ),
-        caixinhas.length === 0 && React.createElement("p", { style:{ fontSize:12, color:"var(--txt2)", marginTop:8 } }, "Nenhuma caixinha de investimento criada. Crie uma para guardar dinheiro do caixa livre."),
-        caixinhas.map(cx => React.createElement("div", { key: cx.id, style:{ display:"flex", alignItems:"center", gap:10, padding:"8px 0", borderTop:"1px solid var(--brd)" } },
-          React.createElement("div", { style:{ width:10, height:10, borderRadius:"50%", background: cx.cor, flexShrink:0 } }),
-          React.createElement("div", { style:{ flex:1 } },
-            React.createElement("div", { style:{ fontSize:13, fontWeight:600, color:"var(--txt)" } }, cx.nome),
-            React.createElement("div", { style:{ fontSize:12, color: cx.cor, fontWeight:700 } }, fmt(cx.saldo || 0))
-          ),
-          React.createElement("button", { onClick: () => { setCxModal({ cx, op:"deposito" }); setCxValor(""); }, style:{ fontSize:11, padding:"3px 8px", borderRadius:6, border:"1px solid var(--brd)", background:"var(--bg3)", color:"var(--txt)", cursor:"pointer" } }, "↓ Guardar"),
-          React.createElement("button", { onClick: () => { setCxModal({ cx, op:"retirada" }); setCxValor(""); }, style:{ fontSize:11, padding:"3px 8px", borderRadius:6, border:"1px solid var(--brd)", background:"var(--bg3)", color:"var(--txt)", cursor:"pointer" } }, "↑ Retirar"),
-          React.createElement("button", { onClick: () => delCaixinha(cx.id), style:{ fontSize:11, padding:"3px 6px", borderRadius:6, border:"none", background:"transparent", color:"#E24B4A", cursor:"pointer" } }, "✕")
-        ))
-      ),
-      cxModal && React.createElement("div", { style:{ position:"fixed", inset:0, background:"rgba(0,0,0,0.6)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" }, onClick: () => setCxModal(null) },
-        React.createElement("div", { style:{ background:"var(--bg2)", borderRadius:16, padding:24, width:300, maxWidth:"90vw" }, onClick: e => e.stopPropagation() },
-          React.createElement("div", { style:{ fontSize:16, fontWeight:700, marginBottom:16, color:"var(--txt)" } },
-            cxModal.op === "deposito" ? "↓ Guardar em " : "↑ Retirar de ", cxModal.cx.nome
-          ),
-          cxModal.op === "deposito" && React.createElement("div", { style:{ fontSize:12, color:"var(--txt2)", marginBottom:8 } }, "Disponível no caixa livre: ", React.createElement("b", { style:{ color:"#6ea8fe" } }, fmt(saldoLivre))),
-          cxModal.op === "retirada" && React.createElement("div", { style:{ fontSize:12, color:"var(--txt2)", marginBottom:8 } }, "Saldo na caixinha: ", React.createElement("b", { style:{ color: cxModal.cx.cor } }, fmt(cxModal.cx.saldo || 0))),
-          React.createElement("input", { type:"number", value: cxValor, onChange: e => setCxValor(e.target.value), placeholder:"Valor (R$)", autoFocus:true, style:{ width:"100%", padding:"10px 12px", borderRadius:8, border:"1px solid var(--brd)", background:"var(--inp-bg)", color:"var(--txt)", fontSize:16, marginBottom:16 } }),
-          React.createElement("div", { style:{ display:"flex", gap:8 } },
-            React.createElement("button", { onClick: () => setCxModal(null), style:{ flex:1, padding:"10px", borderRadius:8, border:"1px solid var(--brd)", background:"var(--bg3)", color:"var(--txt)", cursor:"pointer", fontSize:14 } }, "Cancelar"),
-            React.createElement("button", { onClick: handleCxOp, style:{ flex:1, padding:"10px", borderRadius:8, border:"none", background: cxModal.op==="deposito" ? "#1D9E75" : "#EF9F27", color:"#fff", cursor:"pointer", fontSize:14, fontWeight:700 } }, cxModal.op === "deposito" ? "Guardar" : "Retirar")
-          )
-        )
-      )
-    );
-  })(), /*#__PURE__*/React.createElement("div", {
+  })(), React.createElement(CaixinhasBlock, { caixinhas, setCaixinhas, saldoLivre, fmt, s }), /*#__PURE__*/React.createElement("div", {
     style: {
       ...s.card,
       marginBottom: 12
