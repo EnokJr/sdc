@@ -53,7 +53,10 @@ try {
   };
   // Processar resultado do redirect de login
   _auth.getRedirectResult().then(result => {
-    if (result && result.user) console.log("[SDC] Login via redirect OK:", result.user.email);
+    if (result && result.user) {
+      console.log("[SDC] Login via redirect OK:", result.user.email);
+      window._sdcRedirectUser = result.user;
+    }
   }).catch(e => console.warn("[SDC] getRedirectResult error:", e));
 
   window._sdcFirebaseReady = true;
@@ -181,8 +184,17 @@ function AuthWrapper({ children }) {
   const handleLogin = async () => {
     if (!_fb) return;
     setLoginLoading(true);
-    try { await _fb.auth.signInWithRedirect(_fb.provider); }
-    catch(e) { console.warn("[SDC] Login error:", e); setLoginLoading(false); }
+    try {
+      try {
+        await _fb.auth.signInWithPopup(_fb.provider);
+      } catch(popupErr) {
+        console.warn("[SDC] Popup falhou, tentando redirect:", popupErr.code);
+        if (popupErr.code === "auth/popup-blocked" || popupErr.code === "auth/popup-closed-by-user") {
+          await _fb.auth.signInWithRedirect(_fb.provider);
+        } else { throw popupErr; }
+      }
+    }
+    catch(e) { console.warn("[SDC] Login error:", e.code, e.message); setLoginLoading(false); }
   };
 
   if (!authReady || syncStatus === "loading") {
