@@ -2765,7 +2765,25 @@ function App() {
     }
   }, fabOpen ? "✕" : "＋")), /*#__PURE__*/React.createElement("div", {
     style: s.header
-  }, /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("a", {
+    href: "index.html",
+    style: {
+      fontFamily: "sans-serif",
+      fontSize: 11,
+      fontWeight: 600,
+      color: "var(--txt2)",
+      textDecoration: "none",
+      letterSpacing: "1px",
+      display: "flex",
+      alignItems: "center",
+      gap: 4,
+      padding: "4px 8px",
+      borderRadius: 8,
+      border: "1px solid var(--brd)",
+      whiteSpace: "nowrap",
+      flexShrink: 0
+    }
+  }, "← SYS"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       alignItems: "baseline",
