@@ -1340,6 +1340,85 @@ select.medit-input option {
 }
 .star-zero-btn {font-size:13px;cursor:pointer;line-height:1;background:none;border:1px solid var(--b2);border-radius:4px;padding:2px 6px;color:var(--txt3);margin-right:5px;transition:all .15s;}.star-zero-btn:hover{border-color:var(--b3);color:var(--txt2);}.star-zero-btn.active{border-color:var(--t);color:var(--t);background:var(--tA);}
 
+/* ══════════════════════════════════════
+   MBTI HUD
+══════════════════════════════════════ */
+#s-mbti{background:var(--bg);z-index:20}
+.mbti-wrap{flex:1;overflow-y:auto;scrollbar-width:none;display:flex;flex-direction:column;padding:0 22px 20px}
+.mbti-wrap::-webkit-scrollbar{display:none}
+.mbti-hero{padding:28px 0 18px;text-align:center}
+.mbti-title{font-family:var(--font-display);font-size:22px;font-weight:700;letter-spacing:2px;margin-bottom:6px}
+.mbti-title em{color:var(--gold);font-style:normal}
+.mbti-sub{font-size:12px;color:var(--txt2);line-height:1.6}
+
+/* HUD grid — coluna rosa (I N T J) | coluna azul (E S F P) */
+.mbti-hud{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0 14px}
+.mbti-col{display:flex;flex-direction:column;gap:8px}
+.mbti-pair{display:flex;flex-direction:column;gap:8px}
+.mbti-btn{
+  width:100%;padding:14px 10px;border-radius:var(--r3);
+  font-family:var(--font-display);font-size:22px;font-weight:700;letter-spacing:2px;
+  border:2px solid transparent;cursor:pointer;transition:all .2s;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:var(--bg3);
+}
+.mbti-btn .mbti-letter{font-size:26px;font-weight:700;letter-spacing:0;transition:all .2s}
+.mbti-btn .mbti-word{font-size:8px;letter-spacing:1.5px;font-weight:600;color:var(--txt3);transition:color .2s}
+
+/* Rosa family: I N T J */
+.mbti-btn[data-fam="rosa"]{border-color:rgba(236,72,153,.18)}
+.mbti-btn[data-fam="rosa"] .mbti-letter{color:rgba(236,72,153,.5)}
+.mbti-btn[data-fam="rosa"].mbti-sel{
+  border-color:#ec4899;background:rgba(236,72,153,.12);
+  box-shadow:0 0 18px rgba(236,72,153,.25)
+}
+.mbti-btn[data-fam="rosa"].mbti-sel .mbti-letter{color:#ec4899}
+.mbti-btn[data-fam="rosa"].mbti-sel .mbti-word{color:rgba(236,72,153,.7)}
+.mbti-btn[data-fam="rosa"].mbti-dim{border-color:var(--b1);background:var(--bg2)}
+.mbti-btn[data-fam="rosa"].mbti-dim .mbti-letter{color:var(--txt3)}
+
+/* Azul family: E S F P */
+.mbti-btn[data-fam="azul"]{border-color:rgba(56,189,248,.18)}
+.mbti-btn[data-fam="azul"] .mbti-letter{color:rgba(56,189,248,.5)}
+.mbti-btn[data-fam="azul"].mbti-sel{
+  border-color:#38bdf8;background:rgba(56,189,248,.10);
+  box-shadow:0 0 18px rgba(56,189,248,.2)
+}
+.mbti-btn[data-fam="azul"].mbti-sel .mbti-letter{color:#38bdf8}
+.mbti-btn[data-fam="azul"].mbti-sel .mbti-word{color:rgba(56,189,248,.7)}
+.mbti-btn[data-fam="azul"].mbti-dim{border-color:var(--b1);background:var(--bg2)}
+.mbti-btn[data-fam="azul"].mbti-dim .mbti-letter{color:var(--txt3)}
+
+/* Legend */
+.mbti-legend{background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r3);padding:12px 14px;margin-bottom:14px}
+.mbti-leg-row{display:flex;align-items:flex-start;gap:8px;padding:4px 0;font-size:11px;line-height:1.4;color:var(--txt2)}
+.mbti-leg-row:not(:last-child){border-bottom:1px solid var(--b1)}
+.mbti-leg-key{font-family:var(--font-display);font-weight:700;font-size:12px;min-width:38px;letter-spacing:.5px}
+.mbti-leg-key.rosa{color:#ec4899}.mbti-leg-key.azul{color:#38bdf8}.mbti-leg-key.dim{color:var(--txt3)}
+
+/* Know your type shortcut */
+.mbti-know{background:linear-gradient(135deg,rgba(236,72,153,.08),rgba(56,189,248,.08));border:1px solid rgba(236,72,153,.3);border-radius:var(--r3);padding:14px 16px;cursor:pointer;transition:.2s;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mbti-know:hover{border-color:rgba(236,72,153,.55);background:linear-gradient(135deg,rgba(236,72,153,.13),rgba(56,189,248,.13))}
+.mbti-know-left{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
+.mbti-know-top{display:flex;align-items:center;gap:8px}
+.mbti-know-icon{font-size:15px;line-height:1;flex-shrink:0}
+.mbti-know-title{font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:1px;color:var(--txt)}
+.mbti-know-sub{font-size:11px;color:var(--txt2);line-height:1.45}
+.mbti-know-arrow{font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:1px;color:#ec4899;flex-shrink:0;background:rgba(236,72,153,.12);border:1px solid rgba(236,72,153,.3);border-radius:6px;padding:5px 10px;white-space:nowrap}
+
+/* MBTI quiz */
+.mbti-q-wrap{padding:0 22px 20px}
+.mbti-q-sess{background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r3);margin-bottom:8px;overflow:hidden}
+.mbti-q-hdr{padding:10px 14px 8px;border-bottom:1px solid var(--b1);font-family:var(--font-display);font-size:9px;letter-spacing:2px;color:var(--txt3)}
+.mbti-q-item{padding:13px 14px}
+.mbti-q-item:not(:last-child){border-bottom:1px solid var(--b1)}
+.mbti-q-text{font-size:13px;color:var(--txt);line-height:1.55;margin-bottom:10px}
+.mbti-q-opts{display:flex;gap:6px}
+.mbti-q-opt{flex:1;padding:7px 4px;background:var(--bg4);border:1px solid var(--b1);border-radius:6px;font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:.5px;color:var(--txt2);text-align:center;cursor:pointer;transition:.2s}
+.mbti-q-opt:hover{border-color:var(--b3);color:var(--txt)}
+.mbti-q-opt.sel-a{border-color:#ec4899;background:rgba(236,72,153,.1);color:#ec4899}
+.mbti-q-opt.sel-b{border-color:#38bdf8;background:rgba(56,189,248,.1);color:#38bdf8}
+
 /* DIAG — multi-question page layout */
 .diag-q-card {
   background: var(--bg3);
@@ -1556,6 +1635,88 @@ select.medit-input option {
 </head>
 <body>
 <div class="app">
+
+<!-- ═══════ MBTI ═══════ -->
+<div class="screen" id="s-mbti">
+  <div class="topbar">
+    <button id="mbti-back-btn" onclick="mbtiGoBack()" style="display:none;font-family:var(--font-display,Rajdhani,sans-serif);font-size:11px;font-weight:600;color:var(--txt3);letter-spacing:1px;display:none;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;border:1px solid var(--b1);background:transparent;cursor:pointer;white-space:nowrap;flex-shrink:0">← VOLTAR</button>
+    <a href="index.html" id="mbti-sys-btn" style="font-family:var(--font-display,Rajdhani,sans-serif);font-size:11px;font-weight:600;color:var(--txt3);text-decoration:none;letter-spacing:1px;display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;border:1px solid var(--b1);white-space:nowrap;flex-shrink:0">← SYS</a>
+    <div class="logo">SHEYLA <em>FORJADORA</em></div>
+    <div style="font-family:var(--font-display);font-size:11px;color:var(--txt3);letter-spacing:1px" id="mbti-step-lbl">PERFIL</div>
+  </div>
+  <div class="mbti-wrap" id="mbti-main-view">
+    <div class="mbti-hero">
+      <div class="mbti-title">Qual é seu <em>MBTI</em>?</div>
+      <div class="mbti-sub">Selecione uma letra em cada par. Isso vai personalizar suas missões e desenvolvimento.</div>
+    </div>
+    <!-- HUD de seleção — coluna Rosa (I N T J) | coluna Azul (E S F P) -->
+    <div class="mbti-hud">
+      <!-- Coluna Rosa: I N T J -->
+      <div class="mbti-col">
+        <button class="mbti-btn" data-axis="ie" data-val="I" data-fam="rosa" onclick="mbtiSelect('ie','I')">
+          <span class="mbti-letter">I</span><span class="mbti-word">INTRO</span>
+        </button>
+        <button class="mbti-btn" data-axis="ns" data-val="N" data-fam="rosa" onclick="mbtiSelect('ns','N')">
+          <span class="mbti-letter">N</span><span class="mbti-word">INTUIT</span>
+        </button>
+        <button class="mbti-btn" data-axis="tf" data-val="T" data-fam="rosa" onclick="mbtiSelect('tf','T')">
+          <span class="mbti-letter">T</span><span class="mbti-word">PENSA</span>
+        </button>
+        <button class="mbti-btn" data-axis="jp" data-val="J" data-fam="rosa" onclick="mbtiSelect('jp','J')">
+          <span class="mbti-letter">J</span><span class="mbti-word">JULGA</span>
+        </button>
+      </div>
+      <!-- Coluna Azul: E S F P -->
+      <div class="mbti-col">
+        <button class="mbti-btn" data-axis="ie" data-val="E" data-fam="azul" onclick="mbtiSelect('ie','E')">
+          <span class="mbti-letter">E</span><span class="mbti-word">EXTRO</span>
+        </button>
+        <button class="mbti-btn" data-axis="ns" data-val="S" data-fam="azul" onclick="mbtiSelect('ns','S')">
+          <span class="mbti-letter">S</span><span class="mbti-word">SENSOR</span>
+        </button>
+        <button class="mbti-btn" data-axis="tf" data-val="F" data-fam="azul" onclick="mbtiSelect('tf','F')">
+          <span class="mbti-letter">F</span><span class="mbti-word">SENTE</span>
+        </button>
+        <button class="mbti-btn" data-axis="jp" data-val="P" data-fam="azul" onclick="mbtiSelect('jp','P')">
+          <span class="mbti-letter">P</span><span class="mbti-word">PERCEP</span>
+        </button>
+      </div>
+    </div>
+    <!-- Legenda -->
+    <div class="mbti-legend" id="mbti-legend">
+      <div class="mbti-leg-row"><span class="mbti-leg-key dim" id="leg-ie-key">I/E</span><span id="leg-ie-desc">Introvertido ou Extrovertido</span></div>
+      <div class="mbti-leg-row"><span class="mbti-leg-key dim" id="leg-ns-key">N/S</span><span id="leg-ns-desc">iNtuitivo ou Sensorial</span></div>
+      <div class="mbti-leg-row"><span class="mbti-leg-key dim" id="leg-tf-key">T/F</span><span id="leg-tf-desc">Pensamento (Thinking) ou Sentimento (Feeling)</span></div>
+      <div class="mbti-leg-row"><span class="mbti-leg-key dim" id="leg-jp-key">J/P</span><span id="leg-jp-desc">Julgamento ou Percepção</span></div>
+    </div>
+    <!-- Não sei meu tipo -->
+    <div class="mbti-know" onclick="mbtiStartQuiz()">
+      <div class="mbti-know-left">
+        <div class="mbti-know-top">
+          <span class="mbti-know-icon">🔍</span>
+          <span class="mbti-know-title">DESCOBRIR MEU TIPO</span>
+        </div>
+        <div class="mbti-know-sub">93 perguntas · ~15 min · dividido em sessões</div>
+      </div>
+      <div class="mbti-know-arrow">INICIAR →</div>
+    </div>
+    <div style="padding-bottom:16px">
+      <button class="btn-primary" id="mbti-confirm-btn" onclick="mbtiConfirm()" disabled style="opacity:.4">CONFIRMAR TIPO →</button>
+    </div>
+  </div>
+  <!-- VIEW DO QUESTIONÁRIO (93 perguntas, 5 por sessão) -->
+  <div style="display:none;flex:1;flex-direction:column" id="mbti-quiz-view">
+    <div style="padding:10px 22px 6px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+      <button onclick="mbtiQuizBack()" style="font-family:var(--font-display);font-size:11px;color:var(--txt3);letter-spacing:1px;border:1px solid var(--b1);border-radius:6px;padding:4px 10px">← VOLTAR</button>
+      <div style="font-family:var(--font-display);font-size:11px;color:var(--txt2);letter-spacing:1px" id="mbti-q-progress">SESSÃO 1 / 19</div>
+    </div>
+    <div style="height:3px;background:var(--b1)"><div id="mbti-q-bar" style="height:100%;background:linear-gradient(90deg,#ec4899,#38bdf8);transition:width .4s;width:0"></div></div>
+    <div style="flex:1;overflow-y:auto;scrollbar-width:none;padding:16px 22px 80px" id="mbti-q-body"></div>
+    <div style="padding:12px 22px;border-top:1px solid var(--b1);background:var(--bg);flex-shrink:0">
+      <button class="btn-primary" id="mbti-q-next" onclick="mbtiQuizNext()">PRÓXIMA →</button>
+    </div>
+  </div>
+</div>
 
 <!-- ═══════ ONBOARDING ═══════ -->
 <!-- ═══════ INTRO — ESTRELA PRIMORDIAL ═══════ -->
@@ -1775,6 +1936,16 @@ select.medit-input option {
       </div>
       <div class="si-text" id="res-msg">—</div>
     </div>
+    <!-- MBTI Profile Card -->
+    <div id="res-mbti-card" style="display:none;background:var(--bg3);border:1px solid rgba(236,72,153,.25);border-radius:var(--r);padding:13px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div style="font-family:var(--font-display);font-size:10px;letter-spacing:2px;color:var(--txt2)">PERFIL DE PERSONALIDADE</div>
+        <div id="res-mbti-badge" style="font-family:var(--font-display);font-weight:700;font-size:14px;letter-spacing:2px;background:rgba(236,72,153,.15);border:1px solid rgba(236,72,153,.4);border-radius:6px;padding:2px 10px;color:#ec4899">—</div>
+      </div>
+      <div id="res-mbti-perfil" style="font-size:12px;color:var(--txt2);line-height:1.6;margin-bottom:10px">—</div>
+      <div style="font-family:var(--font-display);font-size:9px;letter-spacing:1.5px;color:var(--txt3);margin-bottom:6px">ELEMENTOS QUE ESTE PERFIL VAI DESENVOLVER</div>
+      <div id="res-mbti-cultivar" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+    </div>
     <!-- Priorities -->
     <div style="background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r);padding:13px;margin-bottom:16px">
       <div style="font-family:var(--font-display);font-size:13px;letter-spacing:1.5px;color:var(--txt2);margin-bottom:12px">PRIORIDADES DA SUA JORNADA</div>
@@ -1821,6 +1992,21 @@ select.medit-input option {
       <div class="sheyla-card" onclick="goTab('tab-sheyla','nv-sheyla')">
         <div class="sc-head"><div class="sc-av">S</div><div><div class="sc-name">SHEYLA FORJADORA</div><div class="sc-mode" id="sc-mode-lbl">ANALISANDO...</div></div></div>
         <div class="sc-text" id="sheyla-msg">—</div>
+      </div>
+
+      <!-- MBTI CARD (aparece quando tipo definido) -->
+      <div id="mbti-home-card" style="display:none;margin:0 18px 4px;background:linear-gradient(135deg,rgba(236,72,153,.07),rgba(56,189,248,.07));border:1px solid rgba(236,72,153,.2);border-radius:var(--r3);padding:12px 14px;cursor:pointer" onclick="showMbti(true)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div style="font-family:var(--font-display);font-size:9px;letter-spacing:2px;color:var(--txt3)">PERSONALIDADE</div>
+          <div style="font-family:var(--font-display);font-size:9px;letter-spacing:1px;color:var(--txt3)">editar →</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div id="mbti-home-type" style="font-family:var(--font-display);font-size:26px;font-weight:700;letter-spacing:3px;line-height:1">—</div>
+          <div style="flex:1;min-width:0">
+            <div id="mbti-home-letters" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:4px"></div>
+            <div id="mbti-home-cultivar" style="display:flex;gap:4px;flex-wrap:wrap"></div>
+          </div>
+        </div>
       </div>
 
       <!-- ELEMENTOS -->
@@ -2800,6 +2986,8 @@ function saveState() {
         biHistory: APP.biHistory || [],
         stagnationAlerts: APP.stagnationAlerts || [],
         missionOfDay: APP.missionOfDay || null,
+        mbtiType: APP.mbtiType || null,
+        mbtiSource: APP.mbtiSource || null,
       },
       missions: APP.missions || [],
       domains: _serializeDomains(),
@@ -2860,6 +3048,8 @@ function loadState() {
       biHistory: a.biHistory || [],
       stagnationAlerts: a.stagnationAlerts || [],
       missionOfDay: a.missionOfDay || null,
+      mbtiType: a.mbtiType || null,
+      mbtiSource: a.mbtiSource || null,
     });
 
     // Restore missions
@@ -3376,6 +3566,375 @@ function submitAction() {
 }
 
 /* ═══════════════════════════════════════════════
+   MBTI — SISTEMA COMPLETO
+═══════════════════════════════════════════════ */
+
+// Seleção manual (HUD)
+APP.mbti = { ie:'', ns:'', tf:'', jp:'' };
+
+const MBTI_AXIS_LABELS = {
+  ie: { a:'I', b:'E', desc_a:'Introvertido', desc_b:'Extrovertido' },
+  ns: { a:'N', b:'S', desc_a:'iNtuitivo',    desc_b:'Sensorial' },
+  tf: { a:'T', b:'F', desc_a:'Pensamento',   desc_b:'Sentimento' },
+  jp: { a:'J', b:'P', desc_a:'Julgamento',   desc_b:'Percepção' },
+};
+const MBTI_AXIS_ORDER = ['ie','ns','tf','jp'];
+const MBTI_FAM_A = { ie:'rosa', ns:'rosa', tf:'rosa', jp:'rosa' }; // I N T J = rosa
+const MBTI_FAM_B = { ie:'azul', ns:'azul', tf:'azul', jp:'azul' }; // E S F P = azul
+
+function mbtiSelect(axis, val) {
+  APP.mbti[axis] = val;
+  // Update buttons
+  document.querySelectorAll(`.mbti-btn[data-axis="${axis}"]`).forEach(btn => {
+    const isThis = btn.dataset.val === val;
+    const fam = btn.dataset.fam;
+    btn.classList.remove('mbti-sel','mbti-dim');
+    btn.classList.add(isThis ? 'mbti-sel' : 'mbti-dim');
+  });
+  // Update legend key color
+  const ax = MBTI_AXIS_LABELS[axis];
+  const isA = val === ax.a;
+  const famSel = isA ? 'rosa' : 'azul';
+  const keyEl = document.getElementById('leg-'+axis+'-key');
+  if(keyEl){ keyEl.className = 'mbti-leg-key '+famSel; keyEl.textContent = val; }
+  const descEl = document.getElementById('leg-'+axis+'-desc');
+  if(descEl){ descEl.textContent = isA ? ax.desc_a : ax.desc_b; descEl.style.color = famSel === 'rosa' ? '#ec4899' : '#38bdf8'; }
+  // Enable confirm if all 4 selected
+  const all4 = MBTI_AXIS_ORDER.every(a => APP.mbti[a] !== '');
+  const btn = document.getElementById('mbti-confirm-btn');
+  if(btn){ btn.disabled = !all4; btn.style.opacity = all4 ? '1' : '.4'; }
+}
+
+function showMbti(fromHome) {
+  APP.mbti = { ie:'', ns:'', tf:'', jp:'' };
+  APP.mbtiQuizAnswers = {};
+  APP.mbtiQuizPage = 0;
+  APP._mbtiFromHome = !!fromHome;
+  // Botão voltar vs SYS
+  const backBtn = document.getElementById('mbti-back-btn');
+  const sysBtn  = document.getElementById('mbti-sys-btn');
+  if(backBtn){ backBtn.style.display = fromHome ? 'flex' : 'none'; }
+  if(sysBtn){  sysBtn.style.display  = fromHome ? 'none' : 'flex'; }
+  // Reset HUD
+  document.querySelectorAll('.mbti-btn').forEach(b => b.classList.remove('mbti-sel','mbti-dim'));
+  const AXIS_DISPLAY = {ie:'I/E', ns:'N/S', tf:'T/F', jp:'J/P'};
+  MBTI_AXIS_ORDER.forEach(ax => {
+    const keyEl = document.getElementById('leg-'+ax+'-key');
+    if(keyEl){ keyEl.className='mbti-leg-key dim'; keyEl.textContent=AXIS_DISPLAY[ax]; }
+    const d = document.getElementById('leg-'+ax+'-desc');
+    const labels = {ie:'Introvertido ou Extrovertido',ns:'iNtuitivo ou Sensorial',tf:'Pensamento (Thinking) ou Sentimento (Feeling)',jp:'Julgamento ou Percepção'};
+    if(d){ d.textContent=labels[ax]; d.style.color=''; }
+  });
+  // Pré-preencher se já tem tipo salvo
+  if(fromHome && APP.mbtiType && APP.mbtiType.length===4){
+    const axMap = [{ax:'ie',idx:0},{ax:'ns',idx:1},{ax:'tf',idx:2},{ax:'jp',idx:3}];
+    axMap.forEach(({ax,idx})=>{
+      const val = APP.mbtiType[idx];
+      APP.mbti[ax] = val;
+      mbtiSelect(ax, val);
+    });
+  }
+  const btn = document.getElementById('mbti-confirm-btn');
+  if(btn){
+    const allSet = APP.mbti.ie && APP.mbti.ns && APP.mbti.tf && APP.mbti.jp;
+    btn.disabled = !allSet; btn.style.opacity = allSet ? '1' : '.4';
+  }
+  const main = document.getElementById('mbti-main-view');
+  const quiz = document.getElementById('mbti-quiz-view');
+  if(main){ main.style.display='flex'; }
+  if(quiz){ quiz.style.display='none'; }
+  goScreen('s-mbti');
+}
+
+function mbtiGoBack() {
+  goScreen('s-home');
+}
+
+function mbtiConfirm() {
+  const { ie, ns, tf, jp } = APP.mbti;
+  if(!ie||!ns||!tf||!jp) return;
+  const newType = ie+ns+tf+jp;
+  if(APP._mbtiFromHome && APP.mbtiType && APP.mbtiType !== newType){
+    if(!confirm(`Isso vai substituir seu tipo atual (${APP.mbtiType}) por ${newType}. Tem certeza?`)) return;
+  }
+  APP.mbtiType = newType;
+  APP.mbtiSource = 'manual';
+  saveState();
+  if(APP._mbtiFromHome){ goScreen('s-home'); updateAppUI(); }
+  else { showDiag(); }
+}
+
+function mbtiStartQuiz() {
+  if(APP._mbtiFromHome && APP.mbtiType){
+    if(!confirm(`Isso vai substituir seu tipo atual (${APP.mbtiType}) com o resultado do questionário. Tem certeza?`)) return;
+  }
+  APP.mbtiQuizAnswers = {};
+  APP.mbtiQuizPage = 0;
+  const main = document.getElementById('mbti-main-view');
+  const quiz = document.getElementById('mbti-quiz-view');
+  if(main){ main.style.display='none'; }
+  if(quiz){ quiz.style.display='flex'; }
+  renderMbtiQuizPage();
+}
+
+function mbtiQuizBack() {
+  if(APP.mbtiQuizPage > 0){
+    APP.mbtiQuizPage--;
+    renderMbtiQuizPage();
+  } else {
+    const main = document.getElementById('mbti-main-view');
+    const quiz = document.getElementById('mbti-quiz-view');
+    if(main){ main.style.display='flex'; }
+    if(quiz){ quiz.style.display='none'; }
+  }
+}
+
+// 93 perguntas MBTI clássicas, cada uma com dimensão e preferência por opção A ou B
+// Formato: { q: texto, a: texto_opcao_A, b: texto_opcao_B, dim: 'ie'|'ns'|'tf'|'jp', aVal: 'I'|'N'|'T'|'J' }
+const MBTI_QS = [
+  // ── I / E ────────────────────────────────────────────────────────
+  {q:'Em festas ou eventos sociais, você tende a…',a:'Ficar em grupos menores ou conversar com poucos conhecidos',b:'Circular bastante e conhecer pessoas novas',dim:'ie',aVal:'I'},
+  {q:'Depois de um longo dia com muitas pessoas, você se sente…',a:'Esgotado e precisando de tempo sozinho',b:'Energizado pela interação',dim:'ie',aVal:'I'},
+  {q:'Quando está num grupo maior, você costuma…',a:'Ouvir mais do que falar',b:'Contribuir ativamente com a conversa',dim:'ie',aVal:'I'},
+  {q:'Ao enfrentar um problema, sua primeira reação é…',a:'Pensar por conta própria antes de falar com alguém',b:'Falar sobre o problema para organizar suas ideias',dim:'ie',aVal:'I'},
+  {q:'Em relação ao seu espaço pessoal…',a:'Prefere ter momentos prolongados de silêncio e introspecção',b:'Sente falta das pessoas quando fica muito tempo sozinho',dim:'ie',aVal:'I'},
+  {q:'Ao aprender algo novo, você prefere…',a:'Estudar sozinho e processar internamente',b:'Discutir com outras pessoas enquanto aprende',dim:'ie',aVal:'I'},
+  {q:'Em uma reunião ou aula, você geralmente…',a:'Reflete bastante antes de se pronunciar',b:'Participa ativamente e fala com frequência',dim:'ie',aVal:'I'},
+  {q:'Suas amizades são…',a:'Poucas e muito profundas',b:'Muitas e variadas',dim:'ie',aVal:'I'},
+  {q:'Quando precisa tomar uma decisão importante…',a:'Prefere refletir sozinho por um tempo',b:'Prefere conversar com pessoas de confiança antes de decidir',dim:'ie',aVal:'I'},
+  {q:'Quanto ao trabalho em equipe…',a:'Prefere trabalhar sozinho na maior parte do tempo',b:'Se energiza colaborando com outras pessoas',dim:'ie',aVal:'I'},
+  {q:'Ao receber uma notícia importante, sua tendência é…',a:'Processar internamente antes de reagir',b:'Reagir e expressar imediatamente',dim:'ie',aVal:'I'},
+  {q:'Em situações de conflito, você tende a…',a:'Se recolher e pensar antes de responder',b:'Falar diretamente e resolver na hora',dim:'ie',aVal:'I'},
+  // ── N / S ────────────────────────────────────────────────────────
+  {q:'Ao ler um texto ou relatório, você foca mais em…',a:'O significado global e as conexões entre ideias',b:'Os fatos, dados e detalhes específicos',dim:'ns',aVal:'N'},
+  {q:'Você prefere trabalhar com…',a:'Conceitos abstratos e possibilidades futuras',b:'Dados concretos e situações reais do presente',dim:'ns',aVal:'N'},
+  {q:'Ao planejar algo, você tende a…',a:'Imaginar muitas possibilidades e cenários',b:'Listar passos práticos e realistas',dim:'ns',aVal:'N'},
+  {q:'Ao aprender algo novo, você prefere…',a:'Entender o conceito por trás antes de ver a aplicação',b:'Ver exemplos práticos e concretos primeiro',dim:'ns',aVal:'N'},
+  {q:'Ao seguir instruções…',a:'Prefere entender a lógica e adaptar conforme necessário',b:'Prefere seguir o procedimento exatamente como descrito',dim:'ns',aVal:'N'},
+  {q:'Você se descreve mais como…',a:'Imaginativo e orientado a ideias',b:'Prático e orientado a resultados',dim:'ns',aVal:'N'},
+  {q:'Em conversas, você prefere…',a:'Discutir teorias, hipóteses e possibilidades',b:'Falar sobre experiências concretas e situações reais',dim:'ns',aVal:'N'},
+  {q:'Quando algo não funciona, você…',a:'Repensa todo o conceito e busca uma abordagem nova',b:'Testa ajustes incrementais no que já existe',dim:'ns',aVal:'N'},
+  {q:'Você confia mais em…',a:'Sua intuição e percepção de padrões',b:'Sua experiência prática e nos fatos',dim:'ns',aVal:'N'},
+  {q:'Ao resolver um problema…',a:'Gosta de pensar fora da caixa e explorar soluções criativas',b:'Prefere soluções testadas e comprovadas',dim:'ns',aVal:'N'},
+  {q:'Você acha mais motivador…',a:'Trabalhar em algo inovador e com grande potencial',b:'Aperfeiçoar algo que já funciona',dim:'ns',aVal:'N'},
+  {q:'Sua atenção tende a se voltar para…',a:'O que poderia ser, o futuro e as possibilidades',b:'O que é, o presente e a realidade atual',dim:'ns',aVal:'N'},
+  // ── T / F ────────────────────────────────────────────────────────
+  {q:'Ao tomar decisões difíceis, você prioriza…',a:'A lógica e a análise racional dos fatos',b:'Como a decisão vai afetar as pessoas envolvidas',dim:'tf',aVal:'T'},
+  {q:'Em um conflito, você tende a…',a:'Analisar quem tem razão com base nos fatos',b:'Buscar um entendimento que preserve o relacionamento',dim:'tf',aVal:'T'},
+  {q:'Ao dar feedback para alguém, você é…',a:'Direto e objetivo, mesmo que cause desconforto',b:'Gentil e cuidadoso para não magoar',dim:'tf',aVal:'T'},
+  {q:'Você acha mais importante ser…',a:'Justo e consistente com os princípios',b:'Empático e atento às necessidades emocionais',dim:'tf',aVal:'T'},
+  {q:'Quando alguém te conta um problema, você tende a…',a:'Propor soluções práticas imediatamente',b:'Ouvir e oferecer suporte emocional',dim:'tf',aVal:'T'},
+  {q:'Em debates, você valoriza mais…',a:'Argumentos bem estruturados e lógicos',b:'Perspectivas pessoais e o impacto nas pessoas',dim:'tf',aVal:'T'},
+  {q:'Ao avaliar uma situação, você foca mais em…',a:'O que faz sentido racionalmente',b:'O que parece certo no plano humano e relacional',dim:'tf',aVal:'T'},
+  {q:'Quando precisa criticar o trabalho de alguém…',a:'Aponta os problemas com clareza e objetividade',b:'Busca equilibrar pontos negativos com elogios',dim:'tf',aVal:'T'},
+  {q:'Você tende a se orgulhar mais de…',a:'Sua competência e raciocínio lógico',b:'Sua empatia e capacidade de cuidar dos outros',dim:'tf',aVal:'T'},
+  {q:'Em situações de crise, você…',a:'Mantém a cabeça fria e analisa a situação objetivamente',b:'Prioriza o bem-estar emocional das pessoas envolvidas',dim:'tf',aVal:'T'},
+  {q:'Ao ver alguém em dificuldade, sua primeira reação é…',a:'Pensar no que pode ser feito de forma prática',b:'Sentir empatia e querer acolher a pessoa',dim:'tf',aVal:'T'},
+  {q:'Você se incomoda mais com…',a:'Raciocínios ilógicos e incoerências',b:'Frieza emocional e falta de consideração pelos outros',dim:'tf',aVal:'T'},
+  // ── J / P ────────────────────────────────────────────────────────
+  {q:'Em relação à sua rotina, você prefere…',a:'Ter uma agenda clara e seguir um plano definido',b:'Manter flexibilidade e decidir conforme o momento',dim:'jp',aVal:'J'},
+  {q:'Ao iniciar um projeto, você costuma…',a:'Planejar tudo antes de começar',b:'Começar e adaptar conforme avança',dim:'jp',aVal:'J'},
+  {q:'Ao tomar decisões, você prefere…',a:'Decidir logo e seguir em frente',b:'Manter as opções em aberto e decidir mais tarde',dim:'jp',aVal:'J'},
+  {q:'Em relação a prazos, você tende a…',a:'Cumprir sempre, planejando com antecedência',b:'Trabalhar melhor sob pressão e deixar para a última hora',dim:'jp',aVal:'J'},
+  {q:'Sua mesa ou espaço de trabalho costuma ser…',a:'Organizado e com um lugar definido para cada coisa',b:'Um pouco caótico, mas você sabe onde está tudo',dim:'jp',aVal:'J'},
+  {q:'Após tomar uma decisão importante, você…',a:'Sente alívio e segurança',b:'Fica pensando se não havia opção melhor',dim:'jp',aVal:'J'},
+  {q:'Em viagens, você prefere…',a:'Planejar o roteiro com antecedência',b:'Deixar fluir e decidir no caminho',dim:'jp',aVal:'J'},
+  {q:'Quando acontece algo inesperado no seu plano…',a:'Se incomoda e precisa reorganizar logo',b:'Adapta facilmente e leva numa boa',dim:'jp',aVal:'J'},
+  {q:'Você gosta mais de…',a:'Listas, checkboxes e tarefas claras',b:'Trabalhar de forma mais orgânica e livre',dim:'jp',aVal:'J'},
+  {q:'Quando um projeto está em andamento, você…',a:'Quer saber o status e manter o controle',b:'Prefere deixar rolar e ver como evolui',dim:'jp',aVal:'J'},
+  {q:'Em relação ao futuro, você…',a:'Planeja ativamente e gosta de ter objetivos claros',b:'Prefere deixar em aberto e seguir as oportunidades',dim:'jp',aVal:'J'},
+  {q:'Ao finalizar uma tarefa, você…',a:'Sente satisfação em riscar da lista',b:'Logo pensa no que mais pode ser explorado',dim:'jp',aVal:'J'},
+  // ── Bateria extra para completar 93 ─────────────────────────────
+  {q:'Você prefere ambientes de trabalho…',a:'Tranquilos, sem muitas interrupções',b:'Dinâmicos, com bastante interação',dim:'ie',aVal:'I'},
+  {q:'Em grupos de estudo ou trabalho, você costuma…',a:'Preferir trabalhar na sua parte e depois integrar',b:'Discutir e construir as ideias junto com o grupo',dim:'ie',aVal:'I'},
+  {q:'Ao receber uma crítica, você costuma…',a:'Processar internamente por um tempo antes de responder',b:'Responder na hora de forma direta',dim:'ie',aVal:'I'},
+  {q:'Em qual situação você se sente mais confortável?',a:'Ambiente calmo e previsível com poucas pessoas',b:'Ambiente agitado e com muita gente ao redor',dim:'ie',aVal:'I'},
+  {q:'Ao iniciar uma conversa com estranhos, você…',a:'Espera a outra pessoa tomar a iniciativa',b:'Toma a iniciativa naturalmente',dim:'ie',aVal:'I'},
+  {q:'Você costuma ter…',a:'Poucos interesses muito profundos',b:'Muitos interesses variados',dim:'ie',aVal:'I'},
+  {q:'Ao apresentar ideias para um grupo, você…',a:'Prefere entregar por escrito ou ter tempo para preparar',b:'Prefere discutir ao vivo e improvisar',dim:'ie',aVal:'I'},
+  {q:'Ao tomar decisões, você confia mais em…',a:'Insights e palpites que surgem sem explicação clara',b:'Informações concretas e verificáveis',dim:'ns',aVal:'N'},
+  {q:'Você se interessa mais por…',a:'O que as coisas significam em um nível mais profundo',b:'Como as coisas funcionam na prática',dim:'ns',aVal:'N'},
+  {q:'Ao descrever uma experiência, você tende a…',a:'Usar metáforas e analogias',b:'Ser preciso e específico nos detalhes',dim:'ns',aVal:'N'},
+  {q:'Em conversas, você prefere falar sobre…',a:'Ideias, teorias e o que poderia ser',b:'Eventos reais, pessoas e experiências concretas',dim:'ns',aVal:'N'},
+  {q:'Você considera mais útil…',a:'Questionar o status quo e imaginar algo diferente',b:'Melhorar o que já existe e funciona',dim:'ns',aVal:'N'},
+  {q:'Ao aprender uma nova habilidade, você…',a:'Quer entender o "por quê" antes de executar',b:'Prefere começar a fazer e aprender fazendo',dim:'ns',aVal:'N'},
+  {q:'Você é mais inspirado por…',a:'Possibilidades futuras e potencial inexplorado',b:'Conquistas concretas e resultados tangíveis',dim:'ns',aVal:'N'},
+  {q:'Sua tendência ao planejar é…',a:'Pensar em como seria o cenário ideal',b:'Identificar os recursos e passos práticos disponíveis',dim:'ns',aVal:'N'},
+  {q:'Ao avaliar uma ideia nova, você primeiro pensa em…',a:'Suas implicações e desdobramentos',b:'Sua viabilidade e aplicação prática',dim:'ns',aVal:'N'},
+  {q:'Você tem mais facilidade em lembrar…',a:'O sentido geral e as conexões entre eventos',b:'Datas, nomes e detalhes específicos',dim:'ns',aVal:'N'},
+  {q:'Ao escolher entre duas opções, você…',a:'Segue o que parece mais alinhado com seus valores',b:'Analisa qual tem mais vantagens objetivas',dim:'tf',aVal:'F'},
+  {q:'Você se sente mais desconfortável com…',a:'Injustiça e falta de ética',b:'Ineficiência e falta de lógica',dim:'tf',aVal:'F'},
+  {q:'Em um trabalho em equipe, você prioriza…',a:'Garantir que todos estejam bem e alinhados',b:'Garantir que o trabalho seja feito de forma eficiente',dim:'tf',aVal:'F'},
+  {q:'Ao cometer um erro, você…',a:'Foca em entender o impacto nas pessoas envolvidas',b:'Analisa o que deu errado e como corrigir',dim:'tf',aVal:'F'},
+  {q:'Em uma negociação, você tende a…',a:'Buscar um acordo que preserve o relacionamento',b:'Focar no melhor resultado possível para ambos os lados',dim:'tf',aVal:'F'},
+  {q:'Você prefere líderes que são…',a:'Inspiradores e que se importam com o time',b:'Competentes e que entregam resultados',dim:'tf',aVal:'F'},
+  {q:'Ao ver um filme ou série, você se conecta mais com…',a:'Os personagens e suas relações emocionais',b:'A trama, os acontecimentos e a lógica da história',dim:'tf',aVal:'F'},
+  {q:'Em qual tipo de ambiente você trabalha melhor?',a:'Um lugar onde as regras são claras e o plano está definido',b:'Um lugar onde há liberdade para improvisar',dim:'jp',aVal:'J'},
+  {q:'Quando começa uma tarefa, você costuma…',a:'Definir todas as etapas antes de começar',b:'Começar e ir descobrindo o caminho',dim:'jp',aVal:'J'},
+  {q:'Em projetos longos, você prefere…',a:'Marcos claros e entregas definidas ao longo do caminho',b:'Liberdade para ajustar o escopo conforme avança',dim:'jp',aVal:'J'},
+  {q:'Com sua agenda, você…',a:'Agenda compromissos com bastante antecedência',b:'Prefere manter dias abertos para o que aparecer',dim:'jp',aVal:'J'},
+  {q:'Ao terminar uma fase de projeto, você…',a:'Registra, documenta e fecha formalmente',b:'Já começa a pensar no que vem a seguir',dim:'jp',aVal:'J'},
+  {q:'Em relação a regras e normas, você…',a:'Acha importante segui-las para manter a ordem',b:'As vê como guias flexíveis que podem ser adaptadas',dim:'jp',aVal:'J'},
+  {q:'Quando tem tempo livre inesperado, você…',a:'Logo pensa no que pode produtivamente fazer',b:'Aproveita para explorar o que surgir',dim:'jp',aVal:'J'},
+  {q:'Em qual tipo de trabalho você rende mais?',a:'Tarefas com escopo bem definido e prazo claro',b:'Tarefas abertas onde você tem autonomia para definir o caminho',dim:'jp',aVal:'J'},
+  // ── Bateria final para fechar 93 ─────────────────────────────────
+  {q:'Você prefere passar seu tempo livre…',a:'Em atividades tranquilas como leitura ou projetos solo',b:'Saindo, explorando ou socializando',dim:'ie',aVal:'I'},
+  {q:'Ao receber um convite de última hora para um evento social, você…',a:'Geralmente prefere não ir ou vai com reservas',b:'Fica animado e vai com prazer',dim:'ie',aVal:'I'},
+  {q:'Quando precisa processar algo emocionalmente difícil, você…',a:'Prefere ficar sozinho para refletir',b:'Precisa falar com alguém para se sentir melhor',dim:'ie',aVal:'I'},
+  {q:'Você considera mais satisfatório…',a:'Aprofundar um conhecimento que já tem',b:'Experimentar coisas novas e variadas',dim:'ns',aVal:'N'},
+  {q:'Ao descrever como você pensa, você diria que…',a:'Salta entre ideias e conexões de forma não linear',b:'Segue um raciocínio passo a passo e linear',dim:'ns',aVal:'N'},
+  {q:'Você se entedia mais com…',a:'Tarefas repetitivas sem desafio intelectual',b:'Teorias abstratas sem aplicação prática',dim:'ns',aVal:'N'},
+  {q:'Em uma decisão que envolve pessoas, você prioriza…',a:'O que é mais justo e consistente com os princípios estabelecidos',b:'O que vai causar menos dor emocional para os envolvidos',dim:'tf',aVal:'T'},
+  {q:'Ao receber um elogio, você…',a:'Considera, mas avalia se é realmente merecido',b:'Fica tocado e agradece com sinceridade',dim:'tf',aVal:'T'},
+  {q:'Você prefere ambientes profissionais que valorizam…',a:'Competência, resultados e eficiência',b:'Colaboração, bem-estar e relacionamentos saudáveis',dim:'tf',aVal:'T'},
+  {q:'Sobre imprevistos na sua semana…',a:'Prefere que não aconteçam — desestabiliza sua rotina',b:'Lida bem — faz parte de como você vive',dim:'jp',aVal:'J'},
+  {q:'Em projetos criativos, você tende a…',a:'Definir um plano e executar dentro dele',b:'Explorar livremente e ver para onde vai',dim:'jp',aVal:'J'},
+  {q:'Você se descreve mais como…',a:'Alguém que finaliza o que começa com determinação',b:'Alguém que está sempre começando coisas novas',dim:'jp',aVal:'J'},
+  {q:'Ao organizar seu espaço digital (arquivos, e-mails, apps)…',a:'Mantém tudo categorizado e em ordem',b:'Funciona no aparente caos mas sabe onde está tudo',dim:'jp',aVal:'J'},
+];
+
+const MBTI_PER_SESSION = 5;
+const MBTI_TOTAL_SESSIONS = Math.ceil(MBTI_QS.length / MBTI_PER_SESSION); // 19
+
+function renderMbtiQuizPage() {
+  const page = APP.mbtiQuizPage;
+  const start = page * MBTI_PER_SESSION;
+  const qs = MBTI_QS.slice(start, start + MBTI_PER_SESSION);
+  const totalPages = MBTI_TOTAL_SESSIONS;
+
+  // progress
+  const progEl = document.getElementById('mbti-q-progress');
+  if(progEl) progEl.textContent = `SESSÃO ${page+1} / ${totalPages}`;
+  const barEl = document.getElementById('mbti-q-bar');
+  if(barEl) barEl.style.width = ((page+1)/totalPages*100)+'%';
+  const stepLbl = document.getElementById('mbti-step-lbl');
+  if(stepLbl) stepLbl.textContent = `${page+1}/${totalPages}`;
+
+  const body = document.getElementById('mbti-q-body');
+  if(!body) return;
+  body.innerHTML = '';
+  const sess = document.createElement('div');
+  sess.className = 'mbti-q-sess';
+  const hdr = document.createElement('div');
+  hdr.className = 'mbti-q-hdr';
+  hdr.textContent = `SESSÃO ${page+1} — ${qs.length} PERGUNTAS`;
+  sess.appendChild(hdr);
+  qs.forEach((q, idx) => {
+    const globalIdx = start + idx;
+    const item = document.createElement('div');
+    item.className = 'mbti-q-item';
+    const txt = document.createElement('div');
+    txt.className = 'mbti-q-text';
+    txt.textContent = q.q;
+    item.appendChild(txt);
+    const opts = document.createElement('div');
+    opts.className = 'mbti-q-opts';
+    // Opção A
+    const btnA = document.createElement('button');
+    btnA.className = 'mbti-q-opt' + (APP.mbtiQuizAnswers[globalIdx] === 'a' ? ' sel-a' : '');
+    btnA.textContent = q.a.length > 40 ? q.a.slice(0,38)+'…' : q.a;
+    btnA.title = q.a;
+    btnA.onclick = () => { APP.mbtiQuizAnswers[globalIdx] = 'a'; refreshMbtiOpts(globalIdx, 'a', sess, start); };
+    // Opção B
+    const btnB = document.createElement('button');
+    btnB.className = 'mbti-q-opt' + (APP.mbtiQuizAnswers[globalIdx] === 'b' ? ' sel-b' : '');
+    btnB.textContent = q.b.length > 40 ? q.b.slice(0,38)+'…' : q.b;
+    btnB.title = q.b;
+    btnB.onclick = () => { APP.mbtiQuizAnswers[globalIdx] = 'b'; refreshMbtiOpts(globalIdx, 'b', sess, start); };
+    opts.appendChild(btnA);
+    opts.appendChild(btnB);
+    item.appendChild(opts);
+    sess.appendChild(item);
+  });
+  body.appendChild(sess);
+  body.scrollTop = 0;
+  updateMbtiNextBtn();
+}
+
+function refreshMbtiOpts(globalIdx, chosen, container, start) {
+  const localIdx = globalIdx - start;
+  const items = container.querySelectorAll('.mbti-q-item');
+  if(!items[localIdx]) return;
+  const btns = items[localIdx].querySelectorAll('.mbti-q-opt');
+  btns[0].className = 'mbti-q-opt' + (chosen === 'a' ? ' sel-a' : '');
+  btns[1].className = 'mbti-q-opt' + (chosen === 'b' ? ' sel-b' : '');
+  updateMbtiNextBtn();
+}
+
+function updateMbtiNextBtn() {
+  const page = APP.mbtiQuizPage;
+  const start = page * MBTI_PER_SESSION;
+  const end = Math.min(start + MBTI_PER_SESSION, MBTI_QS.length);
+  const allAnswered = Array.from({length: end-start}, (_,i) => APP.mbtiQuizAnswers[start+i]).every(v => v === 'a' || v === 'b');
+  const btn = document.getElementById('mbti-q-next');
+  if(!btn) return;
+  const isLast = (APP.mbtiQuizPage >= MBTI_TOTAL_SESSIONS - 1);
+  btn.textContent = isLast ? 'VER MEU TIPO →' : 'PRÓXIMA SESSÃO →';
+  btn.disabled = !allAnswered;
+  btn.style.opacity = allAnswered ? '1' : '.4';
+}
+
+function mbtiQuizNext() {
+  const page = APP.mbtiQuizPage;
+  const start = page * MBTI_PER_SESSION;
+  const end = Math.min(start + MBTI_PER_SESSION, MBTI_QS.length);
+  const allAnswered = Array.from({length: end-start}, (_,i) => APP.mbtiQuizAnswers[start+i]).every(v => v === 'a' || v === 'b');
+  if(!allAnswered) return;
+  if(page < MBTI_TOTAL_SESSIONS - 1){
+    APP.mbtiQuizPage++;
+    renderMbtiQuizPage();
+  } else {
+    // Calcular tipo
+    const scores = {ie:{I:0,E:0}, ns:{N:0,S:0}, tf:{T:0,F:0}, jp:{J:0,P:0}};
+    MBTI_QS.forEach((q,i) => {
+      const ans = APP.mbtiQuizAnswers[i];
+      if(!ans) return;
+      const val = ans === 'a' ? q.aVal : oppositeVal(q.aVal, q.dim);
+      scores[q.dim][val] = (scores[q.dim][val]||0) + 1;
+    });
+    const ie = scores.ie.I >= scores.ie.E ? 'I' : 'E';
+    const ns = scores.ns.N >= scores.ns.S ? 'N' : 'S';
+    const tf = scores.tf.T >= scores.tf.F ? 'T' : 'F';
+    const jp = scores.jp.J >= scores.jp.P ? 'J' : 'P';
+    APP.mbtiType = ie+ns+tf+jp;
+    APP.mbtiSource = 'quiz';
+    // Pré-selecionar na HUD
+    mbtiSelect('ie', ie); mbtiSelect('ns', ns); mbtiSelect('tf', tf); mbtiSelect('jp', jp);
+    // Salvar e ir pro diagnóstico de elementos
+    setTimeout(() => showDiag(), 300);
+  }
+}
+
+function oppositeVal(val, dim) {
+  const map = {ie:{I:'E',E:'I'}, ns:{N:'S',S:'N'}, tf:{T:'F',F:'T'}, jp:{J:'P',P:'J'}};
+  return map[dim][val];
+}
+
+// Mapeamento MBTI → desenvolvimento por elemento (elemento a cultivar)
+const MBTI_ELEMENT_DEVELOP = {
+  'INTJ': { forte:['t','f'], cultivar:['m','g'], perfil:'Você enxerga longe e pensa com precisão. Mas a execução consistente (Madeira) e o autocuidado estruturado (Gelo) são seus pontos de crescimento real.' },
+  'INTP': { forte:['t'],     cultivar:['m','f'], perfil:'Seu raciocínio é profundo e original. Transformar ideias em ação (Madeira) e manter energia e presença (Fogo) são os desafios que vão te elevar.' },
+  'ENTJ': { forte:['f','t'], cultivar:['g','m'], perfil:'Você lidera com visão e determinação. Sustentar o ritmo sem burnout (Gelo) e executar com consistência diária (Madeira) completam o ciclo.' },
+  'ENTP': { forte:['t','f'], cultivar:['g','m'], perfil:'Você gera ideias e conexões com facilidade. Disciplina de longo prazo (Gelo) e foco em entregas concretas (Madeira) são o próximo nível.' },
+  'INFJ': { forte:['t','m'], cultivar:['f','g'], perfil:'Você tem visão e profundidade de propósito. Cultivar presença de liderança (Fogo) e consistência sem sacrifício (Gelo) expande seu impacto.' },
+  'INFP': { forte:['m'],     cultivar:['g','f'], perfil:'Você age com valores e sensibilidade. Estrutura e rotina (Gelo) e assertividade e foco nos seus objetivos (Fogo) são o que falta para florir.' },
+  'ENFJ': { forte:['m','f'], cultivar:['t','g'], perfil:'Você inspira e cuida com naturalidade. Aprofundar análise e estratégia (Trovão) e aprender a se desacelerar (Gelo) são suas áreas de expansão.' },
+  'ENFP': { forte:['f','m'], cultivar:['g','t'], perfil:'Você tem energia e criatividade em abundância. Construir consistência (Gelo) e estruturar seu aprendizado (Trovão) transforma entusiasmo em maestria.' },
+  'ISTJ': { forte:['g','m'], cultivar:['t','f'], perfil:'Você é confiável e consistente. Expandir sua curiosidade intelectual (Trovão) e desenvolver mais fluidez relacional (Madeira via conexão) é o salto.' },
+  'ISFJ': { forte:['g','m'], cultivar:['f','t'], perfil:'Você sustenta e cuida com dedicação. Aprender a ocupar espaço, defender suas ideias (Fogo) e buscar novos aprendizados (Trovão) são seus caminhos.' },
+  'ESTJ': { forte:['m','f'], cultivar:['t','g'], perfil:'Você entrega e organiza com eficiência. Investir em aprendizado estratégico (Trovão) e cultivar pausas intencionais (Gelo) fecha o ciclo de alta performance.' },
+  'ESFJ': { forte:['m','f'], cultivar:['t','g'], perfil:'Você conecta e realiza pelo cuidado com os outros. Desenvolver análise crítica (Trovão) e criar limites saudáveis (Gelo) é o que sustenta seu potencial.' },
+  'ISTP': { forte:['t','g'], cultivar:['f','m'], perfil:'Você resolve problemas com precisão e calma. Liderar e se posicionar (Fogo) e concluir projetos com consistência (Madeira) são seus pontos de crescimento.' },
+  'ISFP': { forte:['m','g'], cultivar:['t','f'], perfil:'Você vive com autenticidade e sensibilidade. Aprofundar seu aprendizado (Trovão) e desenvolver presença mais assertiva (Fogo) amplia seu impacto.' },
+  'ESTP': { forte:['f','m'], cultivar:['g','t'], perfil:'Você é ágil, direto e orientado a ação. Construir constância (Gelo) e aprofundar o conhecimento estratégico (Trovão) transforma impulso em legado.' },
+  'ESFP': { forte:['f','m'], cultivar:['g','t'], perfil:'Você se conecta e age com entusiasmo genuíno. Desenvolver disciplina de longo prazo (Gelo) e curiosidade intelectual estruturada (Trovão) completa você.' },
+};
+
+function getMbtiProfile(type) {
+  return MBTI_ELEMENT_DEVELOP[type] || { forte:[], cultivar:[], perfil:'Seu perfil único vai guiar as missões da Sheyla.' };
+}
+
+/* ═══════════════════════════════════════════════
    ONBOARDING — 2 steps: name + area
 ═══════════════════════════════════════════════ */
 const OB_T = ['Bem-vindo à <em>Forja</em>','Sua área de <em>evolução</em>'];
@@ -3444,7 +4003,7 @@ function obNext() {
       APP.activeDomains = [areaKey];
     }
   }
-  if(APP.step<2){APP.step++;renderOb();}else{showDiag();}
+  if(APP.step<2){APP.step++;renderOb();}else{showMbti();}
 }
 
 function renderOb() {
@@ -3919,7 +4478,33 @@ function calcResult() {
     prioEl.appendChild(d);
   });
 
-    // Save immediately after diagnosis so reload works
+  // MBTI Profile Card
+  const mbtiCard = document.getElementById('res-mbti-card');
+  if(mbtiCard && APP.mbtiType) {
+    mbtiCard.style.display = 'block';
+    const mbtiProf = getMbtiProfile(APP.mbtiType);
+    const badge = document.getElementById('res-mbti-badge');
+    if(badge) badge.textContent = APP.mbtiType;
+    const perfil = document.getElementById('res-mbti-perfil');
+    if(perfil) perfil.textContent = mbtiProf.perfil;
+    const cultivarEl = document.getElementById('res-mbti-cultivar');
+    if(cultivarEl) {
+      cultivarEl.innerHTML = '';
+      const elemNames = {m:'MADEIRA',g:'GELO',t:'TROVÃO',f:'FOGO'};
+      const elemColors = {m:'var(--m)',g:'var(--g)',t:'var(--t)',f:'var(--f)'};
+      const elemBg = {m:'var(--mA)',g:'var(--gA)',t:'var(--tA)',f:'var(--fA)'};
+      mbtiProf.cultivar.forEach(el => {
+        const chip = document.createElement('div');
+        chip.style.cssText = `font-family:var(--font-display);font-size:10px;font-weight:700;letter-spacing:1px;padding:4px 10px;border-radius:20px;border:1px solid ${elemColors[el]};background:${elemBg[el]};color:${elemColors[el]}`;
+        chip.textContent = '↑ '+elemNames[el];
+        cultivarEl.appendChild(chip);
+      });
+    }
+  } else if(mbtiCard) {
+    mbtiCard.style.display = 'none';
+  }
+
+  // Save immediately after diagnosis so reload works
   _autosave();
   goScreen('s-result');
 }
@@ -4053,6 +4638,41 @@ function updateAppUI() {
   {const _e=document.getElementById('ctx-bi');if(_e)_e.textContent=bi;}
   document.getElementById('ctx-bi').style.color=biColor;
   {const _e=document.getElementById('ctx-eq');if(_e)_e.textContent=eq;}
+  // MBTI home card
+  const _mhc=document.getElementById('mbti-home-card');
+  if(_mhc){
+    if(APP.mbtiType){
+      _mhc.style.display='block';
+      const _mt=document.getElementById('mbti-home-type');
+      if(_mt) _mt.textContent=APP.mbtiType;
+      // letter pills: rosa = INTJ, azul = ESFP
+      const _ml=document.getElementById('mbti-home-letters');
+      if(_ml){
+        const rosaSet=new Set(['I','N','T','J']);
+        _ml.innerHTML=APP.mbtiType.split('').map(l=>{
+          const isRosa=rosaSet.has(l);
+          const c=isRosa?'#ec4899':'#38bdf8';
+          return `<span style="font-family:var(--font-display);font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 7px;border-radius:10px;background:${c}22;border:1px solid ${c}55;color:${c}">${l}</span>`;
+        }).join('');
+      }
+      // cultivar chips
+      const _mcu=document.getElementById('mbti-home-cultivar');
+      if(_mcu){
+        const prof=typeof MBTI_ELEMENT_DEVELOP!=='undefined'?MBTI_ELEMENT_DEVELOP[APP.mbtiType]:null;
+        const cultivar=prof?prof.cultivar:[];
+        const eName={m:'Madeira',g:'Gelo',t:'Trovão',f:'Fogo'};
+        const eIco={m:'🌿',g:'❄️',t:'⚡',f:'🔥'};
+        if(cultivar.length){
+          _mcu.innerHTML='<span style="font-size:9px;color:var(--txt3);font-family:var(--font-display);letter-spacing:.5px;align-self:center">desenvolver:</span>'+
+            cultivar.map(k=>`<span style="font-size:10px;padding:2px 7px;border-radius:10px;background:var(--${k}A);border:1px solid var(--${k}B);color:var(--${k});font-family:var(--font-display);font-weight:600;letter-spacing:.5px">${eIco[k]} ${eName[k]}</span>`).join('');
+        } else {
+          _mcu.innerHTML='';
+        }
+      }
+    } else {
+      _mhc.style.display='none';
+    }
+  }
 }
 
 function getSheylaState(m,g,t,f,bi,eq) {
