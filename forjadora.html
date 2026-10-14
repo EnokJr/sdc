@@ -2993,6 +2993,18 @@ function saveState() {
       domains: _serializeDomains(),
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+    // Resumo público para o SYS Hub ler
+    const summary = {
+      name: APP.name,
+      level: APP.level,
+      streak: APP.streak,
+      m: Math.round(APP.m), g: Math.round(APP.g),
+      t: Math.round(APP.t), f: Math.round(APP.f),
+      mbtiType: APP.mbtiType || null,
+      missionsOpen: (APP.missions || []).filter(ms => !ms.done).length,
+      updatedAt: Date.now(),
+    };
+    localStorage.setItem('forj_summary', JSON.stringify(summary));
   } catch(e) { console.warn('saveState failed:', e); }
 }
 
