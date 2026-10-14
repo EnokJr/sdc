@@ -402,46 +402,88 @@ function LifePanel({ user }) {
 
   const forjData = React.useMemo(() => {
     try {
-      // Tenta leituras de múltiplos formatos que a Forjadora possa usar
-      const keys = Object.keys(localStorage);
-      const streak = localStorage.getItem("forj_streak_" + email) || localStorage.getItem("streak");
-      const missoes = localStorage.getItem("forj_missoes_ativas_" + email);
-      const nivel = localStorage.getItem("forj_nivel_" + email);
-      return { streak, missoes, nivel };
-    } catch(e) { return {}; }
-  }, [email]);
+      const raw = localStorage.getItem("forj_summary");
+      return raw ? JSON.parse(raw) : null;
+    } catch(e) { return null; }
+  }, []);
 
-  return React.createElement("div", { className:"life-panel" },
+  // helpers de cor por elemento
+  const ELEM = {
+    m:{ label:"M", color:"#22c55e" },
+    g:{ label:"G", color:"#38bdf8" },
+    t:{ label:"T", color:"#a855f7" },
+    f:{ label:"F", color:"#f97316" },
+  };
+  const ROSA = new Set(["I","N","T","J"]);
+
+  const ce = (tag, props, ...children) => React.createElement(tag, props, ...children);
+
+  // Forjadora element pills
+  function ElemPills({ d }) {
+    return ce("div", { style:{ display:"flex", gap:5, flexWrap:"wrap", margin:"8px 0 4px" } },
+      ["m","g","t","f"].map(k => {
+        const val = d[k] ?? "—";
+        const { label, color } = ELEM[k];
+        return ce("div", { key:k, style:{ display:"flex", flexDirection:"column", alignItems:"center", background: color+"18", border:"1px solid "+color+"44", borderRadius:8, padding:"4px 10px", minWidth:40 } },
+          ce("span", { style:{ fontSize:16, fontWeight:700, color, fontFamily:"Rajdhani,sans-serif" } }, val),
+          ce("span", { style:{ fontSize:8, letterSpacing:1, color, opacity:.7, fontFamily:"Rajdhani,sans-serif" } }, label)
+        );
+      })
+    );
+  }
+
+  // MBTI letter pills
+  function MbtiPills({ type }) {
+    if(!type || type.length !== 4) return null;
+    return ce("div", { style:{ display:"flex", gap:4, alignItems:"center" } },
+      type.split("").map((l,i) => {
+        const c = ROSA.has(l) ? "#ec4899" : "#38bdf8";
+        return ce("span", { key:i, style:{ fontFamily:"Rajdhani,sans-serif", fontSize:12, fontWeight:700, letterSpacing:1, padding:"2px 7px", borderRadius:10, background:c+"22", border:"1px solid "+c+"55", color:c } }, l);
+      })
+    );
+  }
+
+  return ce("div", { className:"life-panel" },
     // SDC Mini-card
-    React.createElement("div", {
+    ce("div", {
       className:"life-card",
       onClick:()=>{ window.location.href="sdc.html"; },
       style:{ borderLeft:"3px solid #1D9E75" }
     },
-      React.createElement("div", { style:{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 } },
-        React.createElement("span", { style:{ fontSize:10, letterSpacing:2, color:"#1D9E75", fontWeight:700 } }, "SDC · FINANCEIRO"),
-        React.createElement("span", { style:{ fontSize:10, color:"var(--txt4)" } }, "↗")
+      ce("div", { style:{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 } },
+        ce("span", { style:{ fontSize:10, letterSpacing:2, color:"#1D9E75", fontWeight:700 } }, "SDC · FINANCEIRO"),
+        ce("span", { style:{ fontSize:10, color:"var(--txt4)" } }, "↗")
       ),
       sdcData.saldo
-        ? React.createElement("div", { style:{ fontSize:20, fontWeight:700, color:"var(--txt)" } }, sdcData.saldo)
-        : React.createElement("div", { style:{ fontSize:13, color:"var(--txt3)" } }, "Abra o SDC para ver seu saldo"),
-      sdcData.gastoHoje && React.createElement("div", { style:{ fontSize:11, color:"var(--txt4)", marginTop:4 } }, "Gasto hoje: " + sdcData.gastoHoje)
+        ? ce("div", { style:{ fontSize:20, fontWeight:700, color:"var(--txt)" } }, sdcData.saldo)
+        : ce("div", { style:{ fontSize:13, color:"var(--txt3)" } }, "Abra o SDC para ver seu saldo"),
+      sdcData.gastoHoje && ce("div", { style:{ fontSize:11, color:"var(--txt4)", marginTop:4 } }, "Gasto hoje: " + sdcData.gastoHoje)
     ),
 
     // Forjadora Mini-card
-    React.createElement("div", {
+    ce("div", {
       className:"life-card",
       onClick:()=>{ window.location.href="forjadora.html"; },
       style:{ borderLeft:"3px solid #EF9F27" }
     },
-      React.createElement("div", { style:{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 } },
-        React.createElement("span", { style:{ fontSize:10, letterSpacing:2, color:"#EF9F27", fontWeight:700 } }, "FORJADORA · PROGRESSO"),
-        React.createElement("span", { style:{ fontSize:10, color:"var(--txt4)" } }, "↗")
+      ce("div", { style:{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 } },
+        ce("span", { style:{ fontSize:10, letterSpacing:2, color:"#EF9F27", fontWeight:700 } }, "FORJADORA · PROGRESSO"),
+        ce("span", { style:{ fontSize:10, color:"var(--txt4)" } }, "↗")
       ),
-      forjData.nivel
-        ? React.createElement("div", { style:{ fontSize:20, fontWeight:700, color:"var(--txt)" } }, "Nível " + forjData.nivel)
-        : React.createElement("div", { style:{ fontSize:13, color:"var(--txt3)" } }, "Continue sua jornada"),
-      forjData.streak && React.createElement("div", { style:{ fontSize:11, color:"#EF9F27", marginTop:4 } }, "🔥 " + forjData.streak + " dias em sequência")
+      forjData
+        ? ce(React.Fragment, null,
+            // Elementos
+            ce(ElemPills, { d: forjData }),
+            // MBTI + missões na mesma linha
+            ce("div", { style:{ display:"flex", alignItems:"center", justifyContent:"space-between", marginTop:6 } },
+              ce(MbtiPills, { type: forjData.mbtiType }),
+              forjData.missionsOpen > 0 && ce("span", { style:{ fontSize:10, color:"#EF9F27", fontFamily:"Rajdhani,sans-serif", fontWeight:600, letterSpacing:.5 } },
+                "⚡ " + forjData.missionsOpen + " missões abertas"
+              )
+            ),
+            forjData.streak > 0 && ce("div", { style:{ fontSize:10, color:"#EF9F27", marginTop:5, opacity:.8 } }, "🔥 " + forjData.streak + " dias em sequência")
+          )
+        : ce("div", { style:{ fontSize:13, color:"var(--txt3)" } }, "Abra a Forjadora para ver seu progresso")
     )
   );
 }
